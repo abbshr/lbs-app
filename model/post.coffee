@@ -1,50 +1,42 @@
-r = require 'rethinkdb'
+{db} = require '../.config'
+thinky = require('thinky') db: db
+type = thinky.type
+r = thinky.r
 
-class Post
+module.exports = Post = thinky.createModel "Post",
+  geopoint: type.point()
+  location: type.string()
+  time: type.date()
+  ip: type.string()
+  text: type.string()
+  image: type.buffer()
+  userId: type.string()
 
-  @db: "lbsapp"
+Post.defineStatic "nearBy", (options, callback) ->
+  @getNearest r.point(options.position),
+    index: "geopoint"
+    maxResults: options.limit
+    maxDist: options.distance
+  .without 'image', 'text'
+  .run()
+  .then (posts) ->
+    callback null, posts
+  .error (err) ->
+    callback err
 
-  @create: (schema, callback) ->
-    r.connect
-      db: @db
-    , (err, conn) ->
-      if err?
-        callback err
-      else
-        r
-        .table "posts"
-        .insert schema
-        .run conn, (err) ->
-          if err?
-            callback err
-          else
-            callback null
+Post.defineStatic "userMap", (userId, callback) ->
+  @filter userId: userId
+  .without 'image', 'text'
+  .run()
+  .then (posts) ->
+    callback null, posts
+  .error (err) ->
+    callback err
 
-  @nearBy: (options, callback) ->
-    r.connect
-      db: @db
-    , (err, conn) ->
-      if err?
-        callback err
-      else
-        r
-        .table "post"
-        .getNearest r.point(options.position),
-          index: "geopoint"
-          maxResults: options.limit
-          maxDist: options.distance
-        .run conn, (err) ->
-          if err?
-            callback err
-          else
-            callback null, posts
-
-    callback err, posts
-
-  @userMap: (user, callback) ->
-    callback err, map
-
-  @getPost: (postId, callback) ->
-    callback err, post
-
-module.exports = Post
+Post.defineStatic "getPost", (postId, callback) ->
+  @get postId
+  .run()
+  .then (post) ->
+    callback null, post
+  .error (err) ->
+    callback err

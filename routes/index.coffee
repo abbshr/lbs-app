@@ -1,24 +1,26 @@
 # api routes
 
 express = requrie 'express'
-apiRouter = express.Router()
-
-# models
-Post = requrie '../model/post'
-User = requrie '../model/user'
+app = express.Router()
 
 # 发布新po
 # 文字, 图片, 视频, 音频, 评价
-apiRouter.post '/post', (req, res, next) ->
-  req.body.username = req.session.user.username
-  Post.create req.body, (err, post) ->
-    if err?
-      res.json error: err
-    else
-      res.json success: yes
+app.post '/post', (req, res, next) ->
+  Post = app.get 'Post'
+  # TODO: 根据geopoint查询location
+  req.body.time = (new Date).getTime()
+  req.body.ip = req.ip
+  req.body.userId = req.session.user.id
+  new Post req.body
+  .save()
+  .then (post) ->
+    res.json success: yes
+  .error (err) ->
+    res.json error: err
 
 # 获取任何地理位置附近的po
-apiRouter.get '/near', (req, res, next) ->
+app.get '/near', (req, res, next) ->
+  Post = app.get 'Post'
   position = req.query["position"]
   distance = req.query["distance"]
   limit = req.query["limit"]
@@ -36,14 +38,16 @@ apiRouter.get '/near', (req, res, next) ->
         posts: posts
 
 # 个人地图
-apiRouter.get '/map', (req, res, next) ->
+app.get '/map', (req, res, next) ->
+  User = app.get 'User'
+  Post = app.get 'Post'
   User.find
     req.query["user"] ? req.session.user.username
   , (err, user) ->
     if err?
       res.json error: err
     else
-      Post.userMap user, (err, map) ->
+      Post.userMap user.id, (err, map) ->
         if err?
           res.json error: err
         else
@@ -52,7 +56,7 @@ apiRouter.get '/map', (req, res, next) ->
             map: map
 
 # 单个po详细信息
-apiRouter.get '/post', (req, res, next) ->
+app.get '/post', (req, res, next) ->
   Post.getPost req.query["postId"], (err, post) ->
     if err?
       res.json error: err
@@ -61,4 +65,4 @@ apiRouter.get '/post', (req, res, next) ->
         success: yes
         post: post
 
-module.exports = apiRouter
+module.exports = app

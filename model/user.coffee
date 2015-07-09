@@ -1,39 +1,16 @@
-r = require 'rethinkdb'
+{db} = require '../.config'
+thinky = require('thinky') db: db
+type = thinky.type
 
-class User
+module.exports = User = thinky.createModel "User",
+  password: type.string()
+  username: type.string()
 
-  @db: "lbsapp"
-
-  @find: (username, callback) ->
-    r.connect
-      db: @db
-    , (err, conn) ->
-      if err?
-        callback err
-      else
-        r
-        .table "users"
-        .filter username: username
-        .run conn, (err) ->
-          if err?
-            callback err
-          else
-            callback null, user
-
-  @create: (schema, callback) ->
-    r.connect
-      db: @db
-    , (err, conn) ->
-      if err?
-        callback err
-      else
-        r
-        .table "users"
-        .insert schema
-        .run conn, (err) ->
-          if err?
-            callback err
-          else
-            callback null
-
-module.exports = User
+User.defineStatic "find", (username, callback) ->
+  @filter username: username
+  .pluck "id", "username", "password"
+  .run()
+  .then (user) ->
+    callback null, user
+  .error (err) ->
+    callback err

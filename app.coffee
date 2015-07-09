@@ -11,7 +11,21 @@ RDBStore = require('express-session-rethinkdb') session
 apiRouter = require './routes/index'
 routes = require './routes/routes'
 
+Post = require './model/post'
+User = require './model/user'
+
+{db, host, port} = require './.config'
+
+User.hasMany Post, "posts", "id", "userId"
+Post.belongsTo User, "user", "userId", "id"
+
+apiRouter.set 'User', User
+apiRouter.set 'Post', Post
+
 app = express()
+
+app.set 'User', User
+app.set 'Post', Post
 
 app.set 'views', path.join(__dirname, 'views')
 app.set 'view engine', 'ejs'
@@ -23,9 +37,9 @@ app.set 'cookie',
     maxAge: 1000 * 60 * 60 * 24 * 7
   store: new RDBStore
     connectOptions:
-      db: 'lbsapp'
-      host: 'localhost'
-      port: '28015'
+      db: db
+      host: host
+      port: port
 
 # uncomment after placing your favicon in /public
 #app.use(favicon(__dirname + '/public/favicon.ico'))
