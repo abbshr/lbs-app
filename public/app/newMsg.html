@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" ng-app="mapApp">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>Our Map App</title>
+ <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/semantic.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/image.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/reset.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/site.css">
+
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/container.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/grid.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/header.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/image.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/menu.css">
+
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/divider.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/segment.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/form.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/input.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/button.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/list.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/message.css">
+  <link rel="stylesheet" type="text/css" href="Semantic-UI-master/dist/components/icon.css">
+  <script src="bower_components/jquery-2.1.4.min.js"></script>
+  <script src="Semantic-UI-master/dist/semantic.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+   <script src="bower_components/angular-resource/angular-resource.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="http://webapi.amap.com/maps?v=1.3&key=afc26617f785e83702d842c3cee6c4ac" type="text/javascript"></script>
+  <script type="text/javascript">
+  prompt("bbbbb!");
+      
+      function newMsg(){
+          prompt("aaaaa!");
+          $('.ui.modal')
+            .modal('show')
+            ;
+          prompt("done!");
+      }
+  </script>
+  </head>
+
+  <body>
+    <button onclick="newMsg()"></button>
+    <div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+   弹出层标题
+  </div>
+  <div class="content">
+    <div class="image">
+     图像可以显示在左或图标
+    </div>
+    <div class="description">
+     描述可以出现在右边
+    </div>
+  </div>
+  <div class="actions">
+    <div class="ui button">取消</div>
+    <div class="ui button">确定</div>
+  </div>
+</div>
+  </body>
+  </html>
