@@ -2,6 +2,9 @@ crypto = require 'crypto'
 
 # 基础路由配置
 module.exports = (app) ->
+
+  User = app.get 'User'
+
   app.get '/', (req, res, next) ->
     res.render 'home'
 
@@ -26,9 +29,7 @@ module.exports = (app) ->
         res.json error: new Error 'user not found'
 
   app.post '/registy', (req, res, next) ->
-    app
-    .get "User"
-    .find
+    User.find
       name: req.body.username
     , (err, user) ->
       if err? or not user?

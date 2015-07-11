@@ -1,14 +1,14 @@
-express = require('express')
-path = require('path')
-favicon = require('serve-favicon')
-logger = require('morgan')
-cookieParser = require('cookie-parser')
-bodyParser = require('body-parser')
-multer = require('multer')
-session = require('express-session')
+express = require 'express'
+path = require 'path'
+favicon = require 'serve-favicon'
+logger = require 'morgan'
+cookieParser = require 'cookie-parser'
+bodyParser = require 'body-parser'
+multer = require 'multer'
+session = require 'express-session'
 RDBStore = require('express-session-rethinkdb') session
 
-apiRouter = require './routes/index'
+api = require './routes/index'
 routes = require './routes/routes'
 
 Post = require './model/post'
@@ -19,9 +19,6 @@ User = require './model/user'
 User.hasMany Post, "posts", "id", "userId"
 Post.belongsTo User, "user", "userId", "id"
 
-apiRouter.set 'User', User
-apiRouter.set 'Post', Post
-
 app = express()
 
 app.set 'User', User
@@ -30,7 +27,7 @@ app.set 'Post', Post
 app.set 'views', path.join(__dirname, 'views')
 app.set 'view engine', 'ejs'
 
-# session
+# session存储配置
 app.set 'cookie',
   secret: "lbsapp"
   cookie:
@@ -51,7 +48,7 @@ app.use cookieParser()
 app.use express.static path.join(__dirname, 'public')
 app.use session app.get 'cookie'
 
-# locals保存session
+# locals变量里保存session
 app.use (req, res, next) ->
   res.locals.session = req.session
   next()
@@ -59,7 +56,7 @@ app.use (req, res, next) ->
 # 基础路由
 routes app
 # api
-app.use '/api', apiRouter
+api app
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
