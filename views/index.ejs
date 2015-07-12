@@ -7,74 +7,100 @@
   <title></title>
   <link rel="stylesheet" type="text/css" href="/stylesheets/semantic.min.css">
   <link rel="stylesheet" href="/stylesheets/app.css">
-  <script type='text/javascript' src="/javascripts/jquery-2.1.4.min.js"></script>
-  <script src="http://webapi.amap.com/maps?v=1.3&key=afc26617f785e83702d842c3cee6c4ac" type="text/javascript"></script>
 </head>
 
-<body ng-controller="HomeCtrl" onload="initialize()">
+<body ng-controller="HomeCtrl">
+
+  <div class="ui page vertically padded grid">
+
+    <!-- header margin -->
+    <div class="ui grid">
+      <div class="row">
+      </div>
+    </div>
+
+    <div class="ui grid">
+      <div class="row">
+        <div class="column">
+
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom margin -->
+    <div class="ui grid">
+      <div class="row">
+      </div>
+    </div>
+  </div>
+
     <div class="ui inverted menu">
         <div class="header item">你在哪兒</div>
          <div class="left menu">
               <button class="ui icon button">
                     <i class="marker icon"></i>
               </button>
-              <button class="ui inverted blue button active"  onclick="">
+              <button id="my-map" class="ui inverted blue button active">
                     我的地图
               </button>
-              <button class="ui inverted green button active"  onclick="newMsg()">
-                    发布新消息
+              <button id="post-btn" class="ui inverted green button active">
+                    添加足迹
               </button>
          </div>
          <div class="right menu">
               <div class="item">
                   <div class="ui icon input">
                         <i class="search icon"></i>
-                        <input type="text" placeholder="搜索…">
+                        <input type="text" placeholder="前往">
                   </div>
               </div>
-              <a class="item" onclick="dispMsg()">前往</a>
         </div>
     </div>
-    <div id="container">
+    <div id="map">
         <div class="ui icon input"> </div>
     </div>
 
 
 
 
-
-
    <!--发布新消息的页面-->
-  <div class="ui modal" id='newmsg'>
-          <i class="close icon"></i>
-     <div class="header">
-                发布新消息
-     </div>
-     <div class="content">
-           <div class="ui form">
-                   <div class="description">
-                                您当前的位置在：
-                   </div>
-                   <div class="ui icon button">
-                          <i class="photo icon"></i>
-                   </div>
-                  <div class="field">
-                        <label>说点什么：</label>
-                        <textarea></textarea>
-                  </div>
-            </div>
-      </div>
-      <div class="actions">
-              <div class="ui black deny button">
-                       取消
-              </div>
-              <div class="ui positive right labeled icon button">
-                       确认发布
-                      <i class="checkmark icon"></i>
-             </div>
-       </div>
-</div>
 
+  <div class="ui modal" id="new-post">
+    <i class="close icon"></i>
+    <div class="ui segment">
+   <div class="header">分享当前位置</div>
+   <div id='loader' class="ui disable inverted dimmer">
+     <div class="ui text loader">Loading</div>
+   </div>
+   <div class="content">
+     <div class="ui form">
+       <form id='post-data' class="" action="/post" method="POST" enctype="multipart/form-data">
+         <div class="description">你现在位于：</div>
+         <input type="text" name="location" value="" disabled></input>
+         <input type="text" name="geopoint" value="" hidden></input>
+         <div class="ui icon button">
+                <i class="photo icon"></i>
+                <input type="file" name="image"></input>
+         </div>
+        <div class="field">
+              <label>说点什么：</label>
+              <textarea name='text'></textarea>
+        </div>
+       </form>
+
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        取消
+      </div>
+      <div id='submit' class="ui positive right labeled icon button">
+        确认发布
+        <i class="checkmark icon"></i>
+     </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -104,8 +130,10 @@
       </div>
   </div>
 
+  <script type='text/javascript' src="/javascripts/jquery-2.1.4.min.js"></script>
   <script src="/javascripts/semantic.min.js"></script>
   <script src="/javascripts/location/geo.js"></script>
+  <script src="http://webapi.amap.com/maps?v=1.3&key=afc26617f785e83702d842c3cee6c4ac" type="text/javascript"></script>
 
   <script src="/javascripts/angularjs/angular.min.js"></script>
   <script src="/javascripts/angularjs/angular-route.min.js"></script>
@@ -115,26 +143,6 @@
   <script src="/javascripts/angularjs/controllers.js"></script>
   <script src="/javascripts/angularjs/filters.js"></script>
 
-  <script type="text/javascript">
-    function initialize(){
-      var position=new AMap.LngLat(126.640497, 45.751298);
-      var mapObj=new AMap.Map("container",{
-            view: new AMap.View2D({//创建地图二维视口
-                  center:position,//创建中心点坐标
-                  zoom:14, //设置地图缩放级别
-                  rotation:0 //设置地图旋转角度
-             }),
-           lang:"zh_cn"//设置地图语言类型，默认：中文简体
-       });//创建地图实例
-    }
-    function newMsg(){
-      $('#newmsg').modal('show');
-    }
-    function dispMsg(){
-      $('#dispmsg').modal('show');
-    }
-   </script>
-
-   <script src="/javascripts/location.js" charset="utf-8"></script>
+  <script src="/javascripts/main.js"></script>
 </body>
 </html>
