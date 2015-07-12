@@ -6,7 +6,7 @@ module.exports = (app) ->
   User = app.get 'User'
 
   app.get '/', (req, res, next) ->
-    res.render 'home'
+    res.render 'index'
 
   app.post '/login', (req, res, next) ->
     User.find

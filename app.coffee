@@ -45,9 +45,8 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded()
 app.use multer()
 app.use cookieParser()
-app.use express.static path.join(__dirname, 'public')
 app.use session app.get 'cookie'
-
+app.use express.static path.join(__dirname, 'public')
 # locals变量里保存session
 app.use (req, res, next) ->
   res.locals.session = req.session

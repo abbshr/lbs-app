@@ -13,7 +13,7 @@ module.exports = Post = thinky.createModel "Post",
   userId: type.string()
 
 Post.defineStatic "nearBy", (options, callback) ->
-  @getNearest r.point(options.position),
+  @getNearest r.point(options.position...),
     index: "geopoint"
     maxResults: options.limit
     maxDist: options.distance
