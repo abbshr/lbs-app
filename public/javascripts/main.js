@@ -10,7 +10,7 @@
     return map.setZoomAndCenter(zoom, pos);
   };
 
-  window.getCurrency = function(map, geo) {
+  window.getCurrency = function(map, geo, callback) {
     var accuracy, lat, lng;
     lng = 126.642464;
     lat = 45.756967;
@@ -32,11 +32,13 @@
             lat = e.position.getLat();
             accuracy = e.accuracy;
             mapInitialize(map, lng, lat, 13);
+            callback(lng, lat);
             return console.info(info(lng, lat, accuracy));
           });
           AMap.event.addListener(geolocation, "error", function(e) {
             console.error(e.info);
             mapInitialize(map, lng, lat, 13);
+            callback(lng, lat);
             return console.info(info(lng, lat, accuracy));
           });
           return geolocation.getCurrentPosition();
@@ -46,6 +48,7 @@
         lat = pos.latitude;
         accuracy = pos.accuracy;
         mapInitialize(map, lng, lat, 13);
+        callback(lng, lat);
         return console.info(info(lng, lat, accuracy));
       }
     });
@@ -78,7 +81,24 @@
     this.geo = new Geo({
       timeout: 1000
     });
-    return getCurrency(this.map, this.geo);
+    return getCurrency(this.map, this.geo, function(lng, lat) {
+      var distance, limit;
+      distance = 1000;
+      limit = 100;
+      return fetch("/api/near?lng=" + lng + "&lat=" + lat + "&distance=" + distance + "&limit=" + limit).then(function(res) {
+        if (res.ok) {
+          return res.json().then(function(res) {
+            if (res.success) {
+              return console.log(res.posts);
+            } else {
+              return console.error(res.error);
+            }
+          });
+        }
+      })["catch"](function(err) {
+        return console.error(err);
+      });
+    });
   };
 
 }).call(this);

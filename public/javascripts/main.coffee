@@ -12,7 +12,7 @@ window.mapInitialize = (map, lng, lat, zoom) ->
   map.setZoomAndCenter zoom, pos
 
 # 兼容定位
-window.getCurrency = (map, geo) ->
+window.getCurrency = (map, geo, callback) ->
   # 默认坐标
   lng = 126.642464
   lat = 45.756967
@@ -34,11 +34,13 @@ window.getCurrency = (map, geo) ->
           lat = e.position.getLat()
           accuracy = e.accuracy
           mapInitialize map, lng, lat, 13
+          callback lng, lat
           console.info info(lng, lat, accuracy)
         # 使用默认坐标定位
         AMap.event.addListener geolocation, "error", (e) ->
           console.error e.info
           mapInitialize map, lng, lat, 13
+          callback lng, lat
           console.info info(lng, lat, accuracy)
         geolocation.getCurrentPosition()
     else
@@ -47,6 +49,7 @@ window.getCurrency = (map, geo) ->
       lat = pos.latitude
       accuracy = pos.accuracy
       mapInitialize map, lng, lat, 13
+      callback lng, lat
       console.info info(lng, lat, accuracy)
 
 # 发布新分享
@@ -93,4 +96,19 @@ window.onload = (e) ->
   # 地理位置对象
   @geo = new Geo timeout: 1000
   # 定位到当前位置
-  getCurrency @map, @geo
+  getCurrency @map, @geo, (lng, lat) ->
+    # 默认值
+    distance = 1000
+    limit = 100
+    # 获取当前位置附近posts
+    fetch "/api/near?lng=#{lng}&lat=#{lat}&distance=#{distance}&limit=#{limit}"
+    .then (res) ->
+      if res.ok
+        res.json().then (res) ->
+          if res.success
+            # TODO: 在地图上绘制这些点
+            console.log res.posts
+          else
+            console.error res.error
+    .catch (err) ->
+      console.error err
