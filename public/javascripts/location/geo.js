@@ -4,17 +4,19 @@
 
   Geo = (function() {
     function Geo(options) {
-      var ref;
-      this.options = options;
-      if ((ref = this.options) != null) {
-        ref.timeout = 6000;
+      var base;
+      this.options = options != null ? options : {};
+      if ((base = this.options).timeout == null) {
+        base.timeout = Infinity;
       }
       this.location = navigator.geolocation;
     }
 
     Geo.prototype.watch = function(callback) {
       return this.location.watchPosition(function(pos) {
-        return callback(pos.coords);
+        return callback(null, pos.coords);
+      }, function(err) {
+        return callback(err);
       }, this.options);
     };
 
@@ -25,7 +27,9 @@
 
     Geo.prototype.getCurrent = function(callback) {
       return this.location.getCurrentPosition(function(pos) {
-        return callback(pos.coords);
+        return callback(null, pos.coords);
+      }, function(err) {
+        return callback(err);
       }, this.options);
     };
 

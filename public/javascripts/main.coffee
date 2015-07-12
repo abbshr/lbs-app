@@ -1,21 +1,60 @@
 
-info = (lng, lat, accuracy) ->
-  "当前位置: (#{lng}, #{lat}), 精确度: #{accuracy}\n"
+# 前端应用内部API
 
-mapInitialize = (mapContainerId, lng, lat, zoom) ->
+
+# debug information
+window.info = (lng, lat, accuracy) ->
+  "当前位置: (#{lng}, #{lat}), 精确度: #{accuracy}m\n"
+
+# 设置地图中心点与放缩级别
+window.mapInitialize = (map, lng, lat, zoom) ->
   pos = new AMap.LngLat lng, lat
-  map = new AMap.Map mapContainerId
-    view: new AMap.View2D
-      center: pos
-      zoom: zoom
-      rotation: 0
-    ,
-    lang: "zh_cn"
+  map.setZoomAndCenter zoom, pos
 
-postNewInfo = (form) ->
+# 兼容定位
+window.getCurrency = (map, geo) ->
+  # 默认坐标
+  lng = 126.642464
+  lat = 45.756967
+  accuracy = Infinity
+
+  geo.getCurrent (err, pos) ->
+    if err?
+      console.log err
+      map.plugin 'AMap.Geolocation', () ->
+        geolocation = new AMap.Geolocation
+          enableHighAccuracy: yes
+          timeout: 6000
+          convert: yes
+          zoomToAccuracy: yes
+        map.addControl geolocation
+        # 第三方API定位
+        AMap.event.addListener geolocation, 'complete', (e) ->
+          lng = e.position.getLng()
+          lat = e.position.getLat()
+          accuracy = e.accuracy
+          mapInitialize map, lng, lat, 13
+          console.info info(lng, lat, accuracy)
+        # 使用默认坐标定位
+        AMap.event.addListener geolocation, "error", (e) ->
+          console.error e.info
+          mapInitialize map, lng, lat, 13
+          console.info info(lng, lat, accuracy)
+        geolocation.getCurrentPosition()
+    else
+      # 使用原生API精准定位
+      lng = pos.longitude
+      lat = pos.latitude
+      accuracy = pos.accuracy
+      mapInitialize map, lng, lat, 13
+      console.info info(lng, lat, accuracy)
+
+# 发布新分享
+window.postNewInfo = (form) ->
   formdata = new FormData form
   fetch "/post", method: 'POST', body: formdata
 
+# 入口
 window.onload = (e) ->
 
   # 打开模态框
@@ -49,9 +88,9 @@ window.onload = (e) ->
     # .catch (err) ->
     #   # error
 
-  @geo = new Geo
+  # 创建地图对象
+  @map = new AMap.Map "map"
+  # 地理位置对象
+  @geo = new Geo timeout: 1000
   # 定位到当前位置
-  @geo.getCurrent (pos) ->
-    # 初始化地图图层
-    mapInitialize "map", pos.longitude, pos.latitude, 13
-    console.log info(pos.longitude, pos.latitude, pos.accuracy)
+  getCurrency @map, @geo

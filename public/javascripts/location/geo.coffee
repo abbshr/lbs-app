@@ -1,12 +1,14 @@
 
 class Geo
-  constructor: (@options) ->
-    @options?.timeout = 6000
+  constructor: (@options={}) ->
+    @options.timeout ?= Infinity
     @location = navigator.geolocation
 
   watch: (callback) ->
     @location.watchPosition (pos) ->
-      callback pos.coords
+      callback null, pos.coords
+    , (err) ->
+      callback err
     , @options
 
   stop: (handle) ->
@@ -15,7 +17,9 @@ class Geo
 
   getCurrent: (callback) ->
     @location.getCurrentPosition (pos) ->
-      callback pos.coords
+      callback null, pos.coords
+    , (err) ->
+      callback err
     , @options
 
   enableHighAccuracy: (enable) ->
