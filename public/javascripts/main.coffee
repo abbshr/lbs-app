@@ -1,6 +1,7 @@
 
 # 前端应用内部API
-LbsApp = {}
+LbsApp =
+  api: {}
 
 # debug information
 info = (lng, lat, accuracy) ->
@@ -82,7 +83,7 @@ LbsApp.getCurrency = (map, geo) ->
 #     console.error err
 
 # 发布新分享
-LbsApp.createPost = (form) ->
+LbsApp.api.createPost = (form) ->
   formdata = new FormData form
   fetch "/post",
     method: 'POST'
@@ -91,24 +92,24 @@ LbsApp.createPost = (form) ->
   .then (res) -> rescb res
 
 # 获取某一地理位置附近分享
-LbsApp.getNearBy = (lng, lat, distance=1000, limit=200) ->
+LbsApp.api.getNearBy = (lng, lat, distance=1000, limit=200) ->
   fetch "/api/near?lng=#{lng}&lat=#{lat}&distance=#{distance}&limit=#{limit}"
   .then (res) -> rescb res
 
 # 获取单个分享
-LbsApp.getPost = (postId) ->
+LbsApp.api.getPost = (postId) ->
   fetch "/post?postId=#{postId}"
   .then (res) -> rescb res
 
 # 获取个人地图
-LbsApp.getUserMap = (username) ->
+LbsApp.api.getUserMap = (username) ->
   fetch "/map?user=#{username}"
   .then (res) -> rescb res
 
 # 访问控制API #
 
 # 用户注册
-LbsApp.login = (user) ->
+LbsApp.api.login = (user) ->
   fetch "/login",
     method: 'POST'
     headers:
@@ -119,7 +120,7 @@ LbsApp.login = (user) ->
   .then (res) -> rescb res
 
 # 用户登录
-LbsApp.registy = (user) ->
+LbsApp.api.registy = (user) ->
   fetch "/registy",
     method: 'POST'
     headers:
@@ -130,14 +131,44 @@ LbsApp.registy = (user) ->
   .then (res) -> rescb res
 
 # 用户注销
-LbsApp.logout = () ->
+LbsApp.api.logout = () ->
   fetch "/logout", credentials: 'same-origin'
   .then (res) -> rescb res
+
+# 地图中心定位到当前
+LbsApp.setCurrentLocation = (map, geo, callback) ->
+  @getCurrency map, geo
+  .then (pos) ->
+    { lng, lat, accuracy } = pos
+    console.info info(lng, lat, accuracy)
+    # 重置地图中心点
+    LbsApp.mapInitialize map, lng, lat, 13
+    # 获取附近1000米内的50条分享
+    LbsApp.api.getNearBy lng, lat, 1000, 50
+  .then (data) ->
+    if data.success
+      callback null, data.posts
+  .catch (err) ->
+    console.error err
+    callback err
 
 # 入口 & 初始化 #
 window.onload = (e) ->
 
-  # 打开模态框
+  # 创建地图对象
+  map = LbsApp.map = new AMap.Map "map"
+  # 地理位置对象
+  geo = LbsApp.geo = new Geo timeout: 1000
+
+  # 定位到当前位置
+  LbsApp.setCurrentLocation map, geo, (err, posts) ->
+    if err?
+      console.error err
+    # TODO: 绘制标记
+    else
+      console.log posts
+
+  # 模态框
   $('#post-btn').click (e) ->
     $('#new-post')
       .modal
@@ -167,26 +198,6 @@ window.onload = (e) ->
     #       $('#loader').removeClass "active"
     # .catch (err) ->
     #   # error
-
-  # 创建地图对象
-  @map = new AMap.Map "map"
-  # 地理位置对象
-  @geo = new Geo timeout: 1000
-  # 定位到当前位置
-  LbsApp.getCurrency @map, @geo
-  .then (pos) ->
-    {lng, lat, accuracy} = pos
-    console.info info(lng, lat, accuracy)
-    # 重置地图中心点
-    LbsApp.mapInitialize map, lng, lat, 13
-    # 获取附近1000米内的50条分享
-    LbsApp.getNearBy lng, lat, 1000, 50
-  .then (data) ->
-    if data.success
-      console.log data
-      # TODO: 在地图上绘点
-  .catch (err) ->
-    console.error err
 
 
 window.LbsApp = LbsApp

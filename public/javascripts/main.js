@@ -2,7 +2,9 @@
 (function() {
   var LbsApp, info, rescb;
 
-  LbsApp = {};
+  LbsApp = {
+    api: {}
+  };
 
   info = function(lng, lat, accuracy) {
     return "当前位置: (" + lng + ", " + lat + "), 精确度: " + accuracy + "m\n";
@@ -77,7 +79,7 @@
     });
   };
 
-  LbsApp.createPost = function(form) {
+  LbsApp.api.createPost = function(form) {
     var formdata;
     formdata = new FormData(form);
     return fetch("/post", {
@@ -89,7 +91,7 @@
     });
   };
 
-  LbsApp.getNearBy = function(lng, lat, distance, limit) {
+  LbsApp.api.getNearBy = function(lng, lat, distance, limit) {
     if (distance == null) {
       distance = 1000;
     }
@@ -101,19 +103,19 @@
     });
   };
 
-  LbsApp.getPost = function(postId) {
+  LbsApp.api.getPost = function(postId) {
     return fetch("/post?postId=" + postId).then(function(res) {
       return rescb(res);
     });
   };
 
-  LbsApp.getUserMap = function(username) {
+  LbsApp.api.getUserMap = function(username) {
     return fetch("/map?user=" + username).then(function(res) {
       return rescb(res);
     });
   };
 
-  LbsApp.login = function(user) {
+  LbsApp.api.login = function(user) {
     return fetch("/login", {
       method: 'POST',
       headers: {
@@ -127,7 +129,7 @@
     });
   };
 
-  LbsApp.registy = function(user) {
+  LbsApp.api.registy = function(user) {
     return fetch("/registy", {
       method: 'POST',
       headers: {
@@ -141,7 +143,7 @@
     });
   };
 
-  LbsApp.logout = function() {
+  LbsApp.api.logout = function() {
     return fetch("/logout", {
       credentials: 'same-origin'
     }).then(function(res) {
@@ -149,8 +151,37 @@
     });
   };
 
+  LbsApp.setCurrentLocation = function(map, geo, callback) {
+    return this.getCurrency(map, geo).then(function(pos) {
+      var accuracy, lat, lng;
+      lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
+      console.info(info(lng, lat, accuracy));
+      LbsApp.mapInitialize(map, lng, lat, 13);
+      return LbsApp.api.getNearBy(lng, lat, 1000, 50);
+    }).then(function(data) {
+      if (data.success) {
+        return callback(null, data.posts);
+      }
+    })["catch"](function(err) {
+      console.error(err);
+      return callback(err);
+    });
+  };
+
   window.onload = function(e) {
-    $('#post-btn').click(function(e) {
+    var geo, map;
+    map = LbsApp.map = new AMap.Map("map");
+    geo = LbsApp.geo = new Geo({
+      timeout: 1000
+    });
+    LbsApp.setCurrentLocation(map, geo, function(err, posts) {
+      if (err != null) {
+        return console.error(err);
+      } else {
+        return console.log(posts);
+      }
+    });
+    return $('#post-btn').click(function(e) {
       return $('#new-post').modal({
         blurring: true,
         onApprove: function() {
@@ -162,23 +193,6 @@
           return false;
         }
       }).modal('show');
-    });
-    this.map = new AMap.Map("map");
-    this.geo = new Geo({
-      timeout: 1000
-    });
-    return LbsApp.getCurrency(this.map, this.geo).then(function(pos) {
-      var accuracy, lat, lng;
-      lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
-      console.info(info(lng, lat, accuracy));
-      LbsApp.mapInitialize(map, lng, lat, 13);
-      return LbsApp.getNearBy(lng, lat, 1000, 50);
-    }).then(function(data) {
-      if (data.success) {
-        return console.log(data);
-      }
-    })["catch"](function(err) {
-      return console.error(err);
     });
   };
 
