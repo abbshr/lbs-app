@@ -14,50 +14,51 @@ rescb = (res) ->
     throw new Error res.status
 
 # 设置地图中心点与放缩级别
-mapInitialize = (map, lng, lat, zoom) ->
+LbsApp.mapInitialize = (map, lng, lat, zoom) ->
   pos = new AMap.LngLat lng, lat
   map.setZoomAndCenter zoom, pos
 
 # 兼容定位
-LbsApp.getCurrency = (map, geo, callback) ->
+LbsApp.getCurrency = (map, geo) ->
   # 默认坐标
   lng = 126.642464
   lat = 45.756967
   accuracy = Infinity
 
-  geo.getCurrent (err, pos) ->
-    if err?
-      console.log err
-      map.plugin 'AMap.Geolocation', () ->
-        geolocation = new AMap.Geolocation
-          enableHighAccuracy: yes
-          timeout: 6000
-          convert: yes
-          zoomToAccuracy: yes
-        map.addControl geolocation
-        # 第三方API定位
-        AMap.event.addListener geolocation, 'complete', (e) ->
-          lng = e.position.getLng()
-          lat = e.position.getLat()
-          accuracy = e.accuracy
-          mapInitialize map, lng, lat, 13
-          callback lng, lat
-          console.info info(lng, lat, accuracy)
-        # 使用默认坐标定位
-        AMap.event.addListener geolocation, "error", (e) ->
-          console.error e.info
-          mapInitialize map, lng, lat, 13
-          callback lng, lat
-          console.info info(lng, lat, accuracy)
-        geolocation.getCurrentPosition()
-    else
-      # 使用原生API精准定位
-      lng = pos.longitude
-      lat = pos.latitude
-      accuracy = pos.accuracy
-      mapInitialize map, lng, lat, 13
-      callback lng, lat
-      console.info info(lng, lat, accuracy)
+  thirdPardApi = new Promise (resolve) ->
+    map.plugin 'AMap.Geolocation', () ->
+      geolocation = new AMap.Geolocation
+        enableHighAccuracy: yes
+        timeout: 6000
+        convert: yes
+        zoomToAccuracy: yes
+      map.addControl geolocation
+
+      # 第三方API定位
+      AMap.event.addListener geolocation, 'complete', (e) ->
+        lng = e.position.getLng()
+        lat = e.position.getLat()
+        accuracy = e.accuracy
+        resolve lng: lng, lat: lat, accuracy: accuracy
+
+      # 使用默认坐标定位
+      AMap.event.addListener geolocation, "error", (e) ->
+        console.error e.info
+        resolve lng: lng, lat: lat, accuracy: accuracy
+
+      geolocation.getCurrentPosition()
+
+  new Promise (resolve, reject) ->
+    geo.getCurrent (err, pos) ->
+      if err?
+        console.log err
+        resolve thirdPardApi
+      else
+        # 使用原生API精准定位
+        lng = pos.longitude
+        lat = pos.latitude
+        accuracy = pos.accuracy
+        resolve lng: lng, lat: lat, accuracy: accuracy
 
 
 # 核心功能API #
@@ -172,13 +173,20 @@ window.onload = (e) ->
   # 地理位置对象
   @geo = new Geo timeout: 1000
   # 定位到当前位置
-  LbsApp.getCurrency @map, @geo, (lng, lat) ->
+  LbsApp.getCurrency @map, @geo
+  .then (pos) ->
+    {lng, lat, accuracy} = pos
+    console.info info(lng, lat, accuracy)
+    # 重置地图中心点
+    LbsApp.mapInitialize map, lng, lat, 13
     # 获取附近1000米内的50条分享
     LbsApp.getNearBy lng, lat, 1000, 50
-    .then (data) ->
-      if data.success
-        # TODO: 在地图上绘点
-    .catch (err) ->
-      console.error err
+  .then (data) ->
+    if data.success
+      console.log data
+      # TODO: 在地图上绘点
+  .catch (err) ->
+    console.error err
+
 
 window.LbsApp = LbsApp
