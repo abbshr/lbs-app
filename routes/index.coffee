@@ -1,5 +1,7 @@
 # api routes
 
+# HTTP API
+
 express = require 'express'
 apiRouter = express.Router()
 
@@ -11,6 +13,7 @@ module.exports = (app) ->
   apiRouter.route '/post'
   # 发布新po
   # 文字, 图片
+  # POST => /post
   .post (req, res, next) ->
     # TODO: 根据geopoint查询location
     req.body.time = (new Date).getTime()
@@ -24,6 +27,7 @@ module.exports = (app) ->
       res.json error: err
 
   # 单个po详细信息
+  # GET => /post?postId=xxx
   .get (req, res, next) ->
     Post.getPost req.query["postId"], (err, post) ->
       if err?
@@ -34,6 +38,7 @@ module.exports = (app) ->
           post: post
 
   # 获取任何地理位置附近的po
+  # GET => /near?lng=126.555&lat=45.233&distance=2000&limit=150
   apiRouter.get '/near', (req, res, next) ->
     position = [+req.query["lng"], +req.query["lat"]]
     distance = +req.query["distance"]
@@ -52,6 +57,7 @@ module.exports = (app) ->
           posts: posts
 
   # 个人地图
+  # GET => /map?user=haoge
   apiRouter.get '/map', (req, res, next) ->
     User.find req.query["user"] ? req.session.user.username, (err, user) ->
       if err?
