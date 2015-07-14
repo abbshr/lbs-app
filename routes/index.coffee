@@ -15,10 +15,15 @@ module.exports = (app) ->
   # 文字, 图片
   # POST => /post
   .post (req, res, next) ->
-    # TODO: 根据geopoint查询location
-    req.body.time = (new Date).getTime()
+    if req.session.user?.id?
+      next()
+    else
+      res.json error: (new Error 'not login!').toString()
+  .post (req, res, next) ->
+    req.body.time = new Date
     req.body.ip = req.ip
-    req.body.userId = req.session.user.id
+    req.body.userId = req.session.user?.id
+    req.body.geopoint = [+req.body.lng, +req.body.lat]
     new Post req.body
     .save()
     .then (post) ->
