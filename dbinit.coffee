@@ -19,6 +19,17 @@ r.connect()
     r.tableList()
     .run conn
   .then (tbs) ->
+    if "session" not in tbs
+      # 创建session表
+      r.tableCreate "session"
+      .run conn
+      .then () ->
+        console.log "创建session表"
+      .catch (err) ->
+        console.error err
+    else
+      console.log "session已存在"
+
     if "Post" not in tbs
       # 创建表
       r.tableCreate "Post"
