@@ -85,7 +85,7 @@ LbsApp.getCurrency = (map, geo) ->
 # 发布新分享
 LbsApp.api.createPost = (form) ->
   formdata = new FormData form
-  fetch "/post",
+  fetch "/api/post",
     method: 'POST'
     body: formdata
     credentials: 'same-origin'
@@ -98,17 +98,17 @@ LbsApp.api.getNearBy = (lng, lat, distance=1000, limit=200) ->
 
 # 获取单个分享
 LbsApp.api.getPost = (postId) ->
-  fetch "/post?postId=#{postId}"
+  fetch "/api/post?postId=#{postId}"
   .then (res) -> rescb res
 
 # 获取个人地图
 LbsApp.api.getUserMap = (username) ->
-  fetch "/map?user=#{username}"
+  fetch "/api/map?user=#{username}"
   .then (res) -> rescb res
 
 # 访问控制API #
 
-# 用户注册
+# 用户登录
 LbsApp.api.login = (user) ->
   fetch "/login",
     method: 'POST'
@@ -119,7 +119,7 @@ LbsApp.api.login = (user) ->
     credentials: 'same-origin'
   .then (res) -> rescb res
 
-# 用户登录
+# 用户注册
 LbsApp.api.registy = (user) ->
   fetch "/registy",
     method: 'POST'

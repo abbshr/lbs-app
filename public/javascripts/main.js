@@ -81,8 +81,8 @@
 
   LbsApp.api.createPost = function(form) {
     var formdata;
-    formdata = new FormData(form);
-    return fetch("/post", {
+    formdata = form;
+    return fetch("/api/post", {
       method: 'POST',
       body: formdata,
       credentials: 'same-origin'
@@ -104,13 +104,13 @@
   };
 
   LbsApp.api.getPost = function(postId) {
-    return fetch("/post?postId=" + postId).then(function(res) {
+    return fetch("/api/post?postId=" + postId).then(function(res) {
       return rescb(res);
     });
   };
 
   LbsApp.api.getUserMap = function(username) {
-    return fetch("/map?user=" + username).then(function(res) {
+    return fetch("/api/map?user=" + username).then(function(res) {
       return rescb(res);
     });
   };
