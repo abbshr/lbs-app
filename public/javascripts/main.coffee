@@ -83,8 +83,11 @@ LbsApp.getCurrency = (map, geo) ->
 #     console.error err
 
 # 发布新分享
+# form 格式(JSON):
+# { lng(数字), lat(数字), location, text, image(可选) }
 LbsApp.api.createPost = (form) ->
-  formdata = new FormData form
+  formdata = new FormData
+  formdata.append key, form[key] for key in Object.keys form
   fetch "/api/post",
     method: 'POST'
     body: formdata
@@ -120,6 +123,8 @@ LbsApp.api.login = (user) ->
   .then (res) -> rescb res
 
 # 用户注册
+# user 格式(JSON):
+# { username, password }
 LbsApp.api.registy = (user) ->
   fetch "/registy",
     method: 'POST'
