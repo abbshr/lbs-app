@@ -20,7 +20,7 @@ Post.defineStatic "nearBy", (options, callback) ->
   .without 'image', 'text'
   .run()
   .then (posts) ->
-    callback null, posts
+    callback null, (post.doc for post in posts)
   .error (err) ->
     callback err
 
@@ -29,7 +29,7 @@ Post.defineStatic "userMap", (userId, callback) ->
   .without 'image', 'text'
   .run()
   .then (posts) ->
-    callback null, posts
+    callback null, (post.doc for post in posts)
   .error (err) ->
     callback err
 

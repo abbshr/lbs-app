@@ -11,6 +11,6 @@ User.defineStatic "find", (username, callback) ->
   .pluck "id", "username", "password"
   .run()
   .then (user) ->
-    callback null, user
+    callback null, user[0]
   .error (err) ->
     callback err
