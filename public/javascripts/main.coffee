@@ -2,6 +2,10 @@
 # 前端应用内部API
 LbsApp =
   api: {}
+  # 创建地图对象
+  map: new AMap.Map "map"
+  # 地理位置对象
+  geo: new Geo timeout: 1000
 
 # debug information
 info = (lng, lat, accuracy) ->
@@ -86,11 +90,9 @@ LbsApp.getCurrency = (map, geo) ->
 # form 格式(JSON):
 # { lng(数字), lat(数字), location, text, image(可选) }
 LbsApp.api.createPost = (form) ->
-  formdata = new FormData
-  formdata.append key, form[key] for key in Object.keys form
   fetch "/api/post",
     method: 'POST'
-    body: formdata
+    body: new FormData form
     credentials: 'same-origin'
   .then (res) -> rescb res
 
@@ -112,26 +114,20 @@ LbsApp.api.getUserMap = (username) ->
 # 访问控制API #
 
 # 用户登录
-LbsApp.api.login = (user) ->
+LbsApp.api.login = (form) ->
   fetch "/login",
     method: 'POST'
-    headers:
-      'Accept': 'application/json'
-      'Content-Type': 'application/json'
-    body: JSON.stringify user
+    body: new FormData form
     credentials: 'same-origin'
   .then (res) -> rescb res
 
 # 用户注册
 # user 格式(JSON):
 # { username, password }
-LbsApp.api.registy = (user) ->
+LbsApp.api.registy = (form) ->
   fetch "/registy",
     method: 'POST'
-    headers:
-      'Accept': 'application/json'
-      'Content-Type': 'application/json'
-    body: JSON.stringify user
+    body: new FormData form
     credentials: 'same-origin'
   .then (res) -> rescb res
 
@@ -144,6 +140,7 @@ LbsApp.api.logout = () ->
 LbsApp.setCurrentLocation = (map, geo, callback) ->
   @getCurrency map, geo
   .then (pos) ->
+    console.log pos
     { lng, lat, accuracy } = pos
     console.info info(lng, lat, accuracy)
     # 重置地图中心点
@@ -151,58 +148,13 @@ LbsApp.setCurrentLocation = (map, geo, callback) ->
     # 获取附近1000米内的50条分享
     LbsApp.api.getNearBy lng, lat, 1000, 50
   .then (data) ->
+    console.log data
     if data.success
       callback null, data.posts
   .catch (err) ->
-    console.error err
+    console.log err
+    # console.error err
     callback err
-
-# 入口 & 初始化 #
-window.onload = (e) ->
-
-  # 创建地图对象
-  map = LbsApp.map = new AMap.Map "map"
-  # 地理位置对象
-  geo = LbsApp.geo = new Geo timeout: 1000
-
-  # 定位到当前位置
-  LbsApp.setCurrentLocation map, geo, (err, posts) ->
-    if err?
-      console.error err
-    # TODO: 绘制标记
-    else
-      console.log posts
-
-  # 模态框
-  $('#post-btn').click (e) ->
-    $('#new-post')
-      .modal
-        blurring: true
-        onApprove: () ->
-          $('#loader').addClass "active"
-          setTimeout () ->
-            $('#new-post').modal 'hide'
-            $('#loader').removeClass "active"
-          , 3000
-          off
-      .modal 'show'
-
-  # 提交
-  # $('#submit').submit (e) ->
-  #   e.preventDefault()
-  #   $('#loader').addClass "active"
-  #   setTimeout () ->
-  #     $('#new-post').modal 'hide'
-  #     $('#loader').removeClass "active"
-  #   , 3000
-    # postNewInfo document.querySelector "#post-data"
-    # .then (res) ->
-    #   if res.ok
-    #     res.json().then (data) ->
-    #       $('#new-post').modal 'hide'
-    #       $('#loader').removeClass "active"
-    # .catch (err) ->
-    #   # error
 
 
 window.LbsApp = LbsApp

@@ -1,0 +1,30 @@
+2015-07-14T15:54:39.611436507 0.053495s notice: Recursively removing directory /home/hao/lbs-app/rethinkdb_data/tmp
+2015-07-14T15:54:39.645022689 0.087080s notice: Initializing directory /home/hao/lbs-app/rethinkdb_data
+2015-07-14T15:54:39.645273000 0.087330s info: Creating a default database for your convenience. (This is because you ran 'rethinkdb' without 'create', 'serve', or '--join', and the directory '/home/hao/lbs-app/rethinkdb_data' did not already exist or is empty.)
+2015-07-14T15:54:39.645338023 0.087395s notice: Running rethinkdb 2.0.4~0trusty (GCC 4.8.2)...
+2015-07-14T15:54:39.651631492 0.093693s notice: Running on Linux 3.16.0-44-generic x86_64
+2015-07-14T15:54:39.651785491 0.093842s notice: Loading data from directory /home/hao/lbs-app/rethinkdb_data
+2015-07-14T15:54:40.259326324 0.701384s info: Automatically using cache size of 2193 MB
+2015-07-14T15:54:40.260938189 0.702995s notice: Listening for intracluster connections on port 29015
+2015-07-14T15:54:40.263964410 0.706022s notice: Listening for client driver connections on port 28015
+2015-07-14T15:54:40.264157521 0.706214s notice: Listening for administrative HTTP connections on port 8080
+2015-07-14T15:54:40.264171699 0.706228s notice: Listening on addresses: 127.0.0.1, 127.0.1.1, ::1
+2015-07-14T15:54:40.264178055 0.706235s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-07-14T15:54:40.264184899 0.706241s notice: Server ready, "hao_X550DP_izl" 71a10516-6479-4ba5-93ee-12bddb6c376e
+2015-07-14T15:54:40.314710596 0.756767s warn: Problem when checking for new versions of RethinkDB: HTTP request to update.rethinkdb.com failed.
+2015-07-14T15:54:41.622182010 2.064239s notice: Server got SIGINT from pid 0, uid 0; shutting down...
+2015-07-14T15:54:41.622439655 2.064496s notice: Shutting down client connections...
+2015-07-14T15:54:41.622773077 2.064831s notice: All client connections closed.
+2015-07-14T15:54:41.622791166 2.064848s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2015-07-14T15:54:41.623334321 2.065392s notice: Storage engine shut down.
+2015-07-14T15:54:43.631879819 0.040063s notice: Running rethinkdb 2.0.4~0trusty (GCC 4.8.2)...
+2015-07-14T15:54:43.640902263 0.049017s notice: Running on Linux 3.16.0-44-generic x86_64
+2015-07-14T15:54:43.641019597 0.049130s notice: Loading data from directory /home/hao/lbs-app/rethinkdb_data
+2015-07-14T15:54:43.861616067 0.269728s info: Automatically using cache size of 2194 MB
+2015-07-14T15:54:43.863505624 0.271617s notice: Listening for intracluster connections on port 29015
+2015-07-14T15:54:43.866890205 0.275001s notice: Listening for client driver connections on port 28015
+2015-07-14T15:54:43.867112649 0.275223s notice: Listening for administrative HTTP connections on port 8080
+2015-07-14T15:54:43.867119493 0.275230s notice: Listening on addresses: 127.0.0.1, 127.0.1.1, ::1
+2015-07-14T15:54:43.867125360 0.275236s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2015-07-14T15:54:43.867131715 0.275243s notice: Server ready, "hao_X550DP_izl" 71a10516-6479-4ba5-93ee-12bddb6c376e
+2015-07-14T15:54:43.898802430 0.306914s warn: Problem when checking for new versions of RethinkDB: HTTP request to update.rethinkdb.com failed.

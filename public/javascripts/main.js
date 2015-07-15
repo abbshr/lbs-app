@@ -3,7 +3,11 @@
   var LbsApp, info, rescb;
 
   LbsApp = {
-    api: {}
+    api: {},
+    map: new AMap.Map("map"),
+    geo: new Geo({
+      timeout: 1000
+    })
   };
 
   info = function(lng, lat, accuracy) {
@@ -80,11 +84,9 @@
   };
 
   LbsApp.api.createPost = function(form) {
-    var formdata;
-    formdata = form;
     return fetch("/api/post", {
       method: 'POST',
-      body: formdata,
+      body: new FormData(form),
       credentials: 'same-origin'
     }).then(function(res) {
       return rescb(res);
@@ -115,28 +117,20 @@
     });
   };
 
-  LbsApp.api.login = function(user) {
+  LbsApp.api.login = function(form) {
     return fetch("/login", {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user),
+      body: new FormData(form),
       credentials: 'same-origin'
     }).then(function(res) {
       return rescb(res);
     });
   };
 
-  LbsApp.api.registy = function(user) {
+  LbsApp.api.registy = function(form) {
     return fetch("/registy", {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user),
+      body: new FormData(form),
       credentials: 'same-origin'
     }).then(function(res) {
       return rescb(res);
@@ -154,45 +148,19 @@
   LbsApp.setCurrentLocation = function(map, geo, callback) {
     return this.getCurrency(map, geo).then(function(pos) {
       var accuracy, lat, lng;
+      console.log(pos);
       lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
       console.info(info(lng, lat, accuracy));
       LbsApp.mapInitialize(map, lng, lat, 13);
       return LbsApp.api.getNearBy(lng, lat, 1000, 50);
     }).then(function(data) {
+      console.log(data);
       if (data.success) {
         return callback(null, data.posts);
       }
     })["catch"](function(err) {
-      console.error(err);
+      console.log(err);
       return callback(err);
-    });
-  };
-
-  window.onload = function(e) {
-    var geo, map;
-    map = LbsApp.map = new AMap.Map("map");
-    geo = LbsApp.geo = new Geo({
-      timeout: 1000
-    });
-    LbsApp.setCurrentLocation(map, geo, function(err, posts) {
-      if (err != null) {
-        return console.error(err);
-      } else {
-        return console.log(posts);
-      }
-    });
-    return $('#post-btn').click(function(e) {
-      return $('#new-post').modal({
-        blurring: true,
-        onApprove: function() {
-          $('#loader').addClass("active");
-          setTimeout(function() {
-            $('#new-post').modal('hide');
-            return $('#loader').removeClass("active");
-          }, 3000);
-          return false;
-        }
-      }).modal('show');
     });
   };
 

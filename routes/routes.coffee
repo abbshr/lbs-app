@@ -9,6 +9,7 @@ module.exports = (app) ->
     res.render 'index'
 
   app.post '/login', (req, res, next) ->
+    console.log req.body
     User.find req.body.username, (err, user) ->
       if err?
         res.json error: err.toString()
