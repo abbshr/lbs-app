@@ -20,8 +20,7 @@ rescb = (res) ->
 
 # 设置地图中心点与放缩级别
 LbsApp.mapInitialize = (map, lng, lat, zoom) ->
-  pos = new AMap.LngLat lng, lat
-  map.setZoomAndCenter zoom, pos
+  map.setZoomAndCenter zoom, new AMap.LngLat(lng, lat)
 
 # 兼容定位
 LbsApp.getCurrency = (map, geo) ->
@@ -146,7 +145,7 @@ LbsApp.setCurrentLocation = (map, geo, callback) ->
     # 重置地图中心点
     LbsApp.mapInitialize map, lng, lat, 13
     # 获取附近1000米内的50条分享
-    LbsApp.api.getNearBy lng, lat, 1000, 50
+    LbsApp.api.getNearBy lng, lat, 5000, 100
   .then (data) ->
     console.log data
     if data.success

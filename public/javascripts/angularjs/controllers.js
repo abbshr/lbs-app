@@ -85,12 +85,49 @@ mapControllers.controller('HomeCtrl', ['$scope', '$http',function($scope, $http)
   }]);
 
 mapControllers.controller('InitLoadCtrl', ['$scope', '$http',function($scope, $http) {
-    LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
-      drawMarkers(LbsApp.map, posts);
-    });
+    $('#current').click(function (e) {
+      LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
+        drawMarkers(LbsApp.map, posts);
+      });
+    }).click();
 }]);
 
-
+mapControllers.controller('SearchCtrl', ['$scope', '$http',function($scope, $http) {
+    $('#search').submit(function (e) {
+      e.preventDefault();
+      // LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
+      //   drawMarkers(LbsApp.map, posts);
+      // });
+      (function placeSearch(){
+		    var MSearch;
+		    AMap.service(["AMap.PlaceSearch"], function() {
+		        MSearch = new AMap.PlaceSearch({ //构造地点查询类
+		            pageSize:10,
+		            pageIndex:1,
+		            city:"021" //城市
+		        });
+		        //关键字查询
+		        MSearch.search(document.querySelector('#go').value, function(status, result){
+		        	if(status === 'complete' && result.info === 'OK'){
+		        		geocoder_CallBack(result);
+		        	}
+		        });
+		    });
+		})();
+    function geocoder_CallBack(data){
+		    var geo = data.poiList.pois[0].location
+		    var lng = geo.lng;
+        var lat = geo.lat;
+        LbsApp.api.getNearBy(lng, lat, 5000, 100)
+        .then(function (res) {
+          console.log(res);
+          LbsApp.mapInitialize(LbsApp.map, lng, lat, 13);
+          drawMarkers(LbsApp.map, res.posts);
+        });
+      return false;
+    }
+    }).click();
+}]);
 
 
 mapControllers.controller('AddmsgCtrl', ['$scope', '$http',function($scope, $http) {
@@ -152,7 +189,7 @@ mapControllers.controller('AddmsgCtrl', ['$scope', '$http',function($scope, $htt
           }
         }).modal('show');
       });
-    }]);
+}]);
 
 
 
@@ -212,9 +249,6 @@ mapControllers.controller('loginCtrl', ['$scope', '$http', function($scope, $htt
   });
 }]);
 
-mapControllers.controller('logoutCtrl', ['$scope', '$http', function($scope, $http) {
-
-}]);
 
 
 $('#logout').click(function(e) {

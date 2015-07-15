@@ -23,9 +23,7 @@
   };
 
   LbsApp.mapInitialize = function(map, lng, lat, zoom) {
-    var pos;
-    pos = new AMap.LngLat(lng, lat);
-    return map.setZoomAndCenter(zoom, pos);
+    return map.setZoomAndCenter(zoom, new AMap.LngLat(lng, lat));
   };
 
   LbsApp.getCurrency = function(map, geo) {
@@ -152,7 +150,7 @@
       lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
       console.info(info(lng, lat, accuracy));
       LbsApp.mapInitialize(map, lng, lat, 13);
-      return LbsApp.api.getNearBy(lng, lat, 1000, 50);
+      return LbsApp.api.getNearBy(lng, lat, 5000, 100);
     }).then(function(data) {
       console.log(data);
       if (data.success) {
