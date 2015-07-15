@@ -87,7 +87,7 @@ LbsApp.getCurrency = (map, geo) ->
 # { lng(数字), lat(数字), location, text, image(可选) }
 LbsApp.api.createPost = (form) ->
   formdata = new FormData
-  formdata.append key, form[key] for key in Object.keys form
+  # formdata.append key, form[key] for key in Object.keys form
   fetch "/api/post",
     method: 'POST'
     body: formdata
