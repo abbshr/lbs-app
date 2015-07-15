@@ -19,3 +19,4 @@ coverage
 node_modules
 storage
 npm-debug.log
+rethinkdb_data/
