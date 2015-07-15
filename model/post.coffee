@@ -29,7 +29,7 @@ Post.defineStatic "userMap", (userId, callback) ->
   .without 'image', 'text'
   .run()
   .then (posts) ->
-    callback null, (post.doc for post in posts)
+    callback null, posts
   .error (err) ->
     callback err
 

@@ -6,7 +6,7 @@ function drawMarkers(map, posts) {
   var markers= [];
 
   posts.forEach(function (post) {
-    var markerPosition = new AMap.LngLat(post.lng, post.lat);
+    var markerPosition = map.lngLatToContainer(new AMap.LngLat(post.lng, post.lat), 13);
     var marker = new AMap.Marker({
       //基点位置
       position:markerPosition,
@@ -197,7 +197,7 @@ mapControllers.controller('registryCtrl', ['$scope', '$http', function($scope, $
   if (localStorage['has-been-login'] == '1') {
     document.querySelector("#regis").style.display = 'none';
   } else {
-    document.querySelector("#logout").style.display = 'inherit';
+    document.querySelector("#logout").style.display = 'none';
   }
   $('#regis').click(function(e) {
     $('#regist').modal({
