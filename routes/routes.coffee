@@ -9,7 +9,6 @@ module.exports = (app) ->
     res.render 'index'
 
   app.post '/login', (req, res, next) ->
-    console.log req.body
     User.find req.body.username, (err, user) ->
       if err?
         res.json error: err.toString()
@@ -21,8 +20,7 @@ module.exports = (app) ->
 
         if shadow is user.password
           req.session.user = user
-          delete user.password
-          res.json success: yes, user: user
+          res.json success: yes
         else
           res.json error: (new Error "incorrect password").toString()
       else

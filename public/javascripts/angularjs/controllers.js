@@ -15,7 +15,7 @@ function drawMarkers(map, posts) {
       //相对于基点的位置
       offset:{x:-8, y:-34}
     });
-    marker.setTitle(post.text);
+    marker.setTitle(post.time);
     AMap.event.addListener(marker,'click',function(){
        infoWindow.open(map,marker.getPosition());
      });
@@ -106,7 +106,7 @@ function MyDrawMarkers(map, posts) {
      //实例化信息窗体
     var infoWindow = new AMap.InfoWindow({
         isCustom:true,  //使用自定义窗体
-        content:createInfoWindow(`${post.location}<span style="font-size:11px;color:#F00;"></span>`,`<img src='http://tpc.googlesyndication.com/simgad/5843493769827749134' style='position:relative;float:left;margin:0 5px 5px 0;'>地址：${post.location}<br/><br/>${post.text}`),
+        content:createInfoWindow(`${post.time}<span style="font-size:11px;color:#F00;"></span>`,`<img src='http://tpc.googlesyndication.com/simgad/5843493769827749134' style='position:relative;float:left;margin:0 5px 5px 0;'>地址：${post.location}<br/><br/>${post.text}`),
         offset:new AMap.Pixel(16, -45)//-113, -140
       });
 
@@ -367,7 +367,6 @@ mapControllers.controller('AddmsgCtrl', ['$scope', '$http',function($scope, $htt
 mapControllers.controller('registryCtrl', ['$scope', '$http', function($scope, $http) {
   if (localStorage['has-been-login'] == '1') {
     document.querySelector("#regis").style.display = 'none';
-    document.querySelector("#logout").style.display = 'inherit';
   } else {
     document.querySelector("#logout").style.display = 'none';
   }

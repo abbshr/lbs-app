@@ -10,6 +10,10 @@
     })
   };
 
+  LbsApp.map.plugin('AMap.Geolocation', function() {
+    return console.log('加载geolocation控件');
+  });
+
   info = function(lng, lat, accuracy) {
     return "当前位置: (" + lng + ", " + lat + "), 精确度: " + accuracy + "m\n";
   };
@@ -31,36 +35,35 @@
     lng = 126.642464;
     lat = 45.756967;
     accuracy = Infinity;
-    thirdPardApi = new Promise(function(resolve) {
-      return map.plugin('AMap.Geolocation', function() {
-        var geolocation;
-        geolocation = new AMap.Geolocation({
-          enableHighAccuracy: true,
-          timeout: 6000,
-          convert: true,
-          zoomToAccuracy: true
-        });
-        map.addControl(geolocation);
-        AMap.event.addListener(geolocation, 'complete', function(e) {
-          lng = e.position.getLng();
-          lat = e.position.getLat();
-          accuracy = e.accuracy;
-          return resolve({
-            lng: lng,
-            lat: lat,
-            accuracy: accuracy
-          });
-        });
-        AMap.event.addListener(geolocation, "error", function(e) {
-          console.error(e.info);
-          return resolve({
-            lng: lng,
-            lat: lat,
-            accuracy: accuracy
-          });
-        });
-        return geolocation.getCurrentPosition();
+    if (this.locationMarker == null) {
+      this.locationMarker = new AMap.Geolocation({
+        enableHighAccuracy: true,
+        timeout: 6000,
+        convert: true,
+        zoomToAccuracy: true
       });
+    }
+    map.addControl(this.locationMarker);
+    thirdPardApi = new Promise(function(resolve) {
+      AMap.event.addListenerOnce(LbsApp.locationMarker, 'complete', function(e) {
+        lng = e.position.getLng();
+        lat = e.position.getLat();
+        accuracy = e.accuracy;
+        return resolve({
+          lng: lng,
+          lat: lat,
+          accuracy: accuracy
+        });
+      });
+      AMap.event.addListenerOnce(LbsApp.locationMarker, "error", function(e) {
+        console.error(e.info);
+        return resolve({
+          lng: lng,
+          lat: lat,
+          accuracy: accuracy
+        });
+      });
+      return LbsApp.locationMarker.getCurrentPosition();
     });
     return new Promise(function(resolve, reject) {
       return geo.getCurrent(function(err, pos) {
@@ -110,7 +113,7 @@
   };
 
   LbsApp.api.getUserMap = function(username) {
-    return fetch("/api/map", {
+    return fetch("/api/map" + (username ? "?user=" + username : ''), {
       credentials: 'same-origin'
     }).then(function(res) {
       return rescb(res);

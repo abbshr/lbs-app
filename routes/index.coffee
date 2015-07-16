@@ -46,6 +46,7 @@ module.exports = (app) ->
   # 获取任何地理位置附近的po
   # GET => /near?lng=126.555&lat=45.233&distance=2000&limit=150
   apiRouter.get '/near', (req, res, next) ->
+    console.log req.session
     position = [+req.query["lng"], +req.query["lat"]]
     distance = +req.query["distance"]
     limit = +req.query["limit"]

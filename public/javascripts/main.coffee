@@ -7,6 +7,8 @@ LbsApp =
   # 地理位置对象
   geo: new Geo timeout: 1000
 
+LbsApp.map.plugin 'AMap.Geolocation', () -> console.log '加载geolocation控件'
+
 # debug information
 info = (lng, lat, accuracy) ->
   "当前位置: (#{lng}, #{lat}), 精确度: #{accuracy}m\n"
@@ -29,28 +31,29 @@ LbsApp.getCurrency = (map, geo) ->
   lat = 45.756967
   accuracy = Infinity
 
+  @locationMarker ?= new AMap.Geolocation
+    enableHighAccuracy: yes
+    timeout: 6000
+    convert: yes
+    zoomToAccuracy: yes
+
+  map.addControl @locationMarker
+
   thirdPardApi = new Promise (resolve) ->
-    map.plugin 'AMap.Geolocation', () ->
-      geolocation = new AMap.Geolocation
-        enableHighAccuracy: yes
-        timeout: 6000
-        convert: yes
-        zoomToAccuracy: yes
-      map.addControl geolocation
 
-      # 第三方API定位
-      AMap.event.addListener geolocation, 'complete', (e) ->
-        lng = e.position.getLng()
-        lat = e.position.getLat()
-        accuracy = e.accuracy
-        resolve lng: lng, lat: lat, accuracy: accuracy
+    # 第三方API定位
+    AMap.event.addListenerOnce LbsApp.locationMarker, 'complete', (e) ->
+      lng = e.position.getLng()
+      lat = e.position.getLat()
+      accuracy = e.accuracy
+      resolve lng: lng, lat: lat, accuracy: accuracy
 
-      # 使用默认坐标定位
-      AMap.event.addListener geolocation, "error", (e) ->
-        console.error e.info
-        resolve lng: lng, lat: lat, accuracy: accuracy
+    # 使用默认坐标定位
+    AMap.event.addListenerOnce LbsApp.locationMarker, "error", (e) ->
+      console.error e.info
+      resolve lng: lng, lat: lat, accuracy: accuracy
 
-      geolocation.getCurrentPosition()
+    LbsApp.locationMarker.getCurrentPosition()
 
   new Promise (resolve, reject) ->
     geo.getCurrent (err, pos) ->
@@ -66,24 +69,6 @@ LbsApp.getCurrency = (map, geo) ->
 
 
 # 核心功能API #
-
-# example: (获取当前位置附近的分享)
-#
-# LbsApp
-#   .getNearBy 162.232, 56.122
-#   .then (data) ->
-#     # 服务器响应的JSON数据
-#     # data => { success: true, posts: [...] }
-#     # 或 { error: true }
-#     if data.success
-#       # 执行后续任务, 如绘制地图
-#       ...
-#     else
-#       # 转交给catch处理
-#       throw new Error 'error'
-#   .catch (err) ->
-#     # 处理所有错误
-#     console.error err
 
 # 发布新分享
 # form 格式(JSON):
@@ -107,7 +92,7 @@ LbsApp.api.getPost = (postId) ->
 
 # 获取个人地图
 LbsApp.api.getUserMap = (username) ->
-  fetch "/api/map", credentials: 'same-origin'
+  fetch "/api/map#{if username then "?user=#{username}" else ''}", credentials: 'same-origin'
   .then (res) -> rescb res
 
 # 访问控制API #
