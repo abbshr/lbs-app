@@ -96,7 +96,7 @@
 
   LbsApp.api.getNearBy = function(lng, lat, distance, limit) {
     if (distance == null) {
-      distance = 1000;
+      distance = 100000;
     }
     if (limit == null) {
       limit = 200;
@@ -155,7 +155,7 @@
       lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
       console.info(info(lng, lat, accuracy));
       LbsApp.mapInitialize(map, lng, lat, 13);
-      return LbsApp.api.getNearBy(lng, lat, 5000, 100);
+      return LbsApp.api.getNearBy(lng, lat);
     }).then(function(data) {
       console.log(data);
       if (data.success) {

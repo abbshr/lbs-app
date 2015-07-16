@@ -81,7 +81,7 @@ LbsApp.api.createPost = (form) ->
   .then (res) -> rescb res
 
 # 获取某一地理位置附近分享
-LbsApp.api.getNearBy = (lng, lat, distance=1000, limit=200) ->
+LbsApp.api.getNearBy = (lng, lat, distance=100000, limit=200) ->
   fetch "/api/near?lng=#{lng}&lat=#{lat}&distance=#{distance}&limit=#{limit}"
   .then (res) -> rescb res
 
@@ -92,7 +92,6 @@ LbsApp.api.getPost = (postId) ->
 
 # 获取个人地图
 LbsApp.api.getUserMap = (username) ->
-
   fetch "/api/map#{if username then "?user=#{username}" else ''}", credentials: 'same-origin'
   .then (res) -> rescb res
 
@@ -131,7 +130,7 @@ LbsApp.setCurrentLocation = (map, geo, callback) ->
     # 重置地图中心点
     LbsApp.mapInitialize map, lng, lat, 13
     # 获取附近1000米内的50条分享
-    LbsApp.api.getNearBy lng, lat, 5000, 100
+    LbsApp.api.getNearBy lng, lat
   .then (data) ->
     console.log data
     if data.success

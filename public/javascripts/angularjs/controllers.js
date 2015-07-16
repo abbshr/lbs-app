@@ -1,12 +1,12 @@
 'use strict';
 
 /* Controllers */
-
+var polyline;
 function drawMarkers(map, posts) {
   var markers= [];
 
   posts.forEach(function (post) {
-    var markerPosition = map.lngLatToContainer(new AMap.LngLat(post.lng, post.lat), 13);
+    var markerPosition = new AMap.LngLat(post.lng, post.lat);
     var marker = new AMap.Marker({
       //基点位置
       position:markerPosition,
@@ -15,7 +15,63 @@ function drawMarkers(map, posts) {
       //相对于基点的位置
       offset:{x:-8, y:-34}
     });
-    marker.setTitle(post.text);
+    marker.setTitle(post.time);
+    AMap.event.addListener(marker,'click',function(){
+       infoWindow.open(map,marker.getPosition());
+     });
+     //实例化信息窗体
+    var infoWindow = new AMap.InfoWindow({
+        isCustom:true,  //使用自定义窗体
+        content:createInfoWindow(`${post.location}<span style="font-size:11px;color:#F00;"></span>`,`<img src='http://tpc.googlesyndication.com/simgad/5843493769827749134' style='position:relative;float:left;margin:0 5px 5px 0;'>地址：${post.location}<br/><br/>${post.text}`),
+        offset:new AMap.Pixel(16, -45)//-113, -140
+      });
+
+    //构建自定义信息窗体
+    function createInfoWindow(title,content){
+      var info = document.createElement("div");
+      info.className = "info";
+
+      //可以通过下面的方式修改自定义窗体的宽高
+      //info.style.width = "400px";
+
+      // 定义顶部标题
+      var top = document.createElement("div");
+      var titleD = document.createElement("div");
+      var closeX = document.createElement("img");
+      top.className = "info-top";
+      titleD.innerHTML = title;
+      closeX.src = "http://webapi.amap.com/images/close2.gif";
+      closeX.onclick = closeInfoWindow;
+
+      top.appendChild(titleD);
+      top.appendChild(closeX);
+      info.appendChild(top);
+
+
+      // 定义中部内容
+      var middle = document.createElement("div");
+      middle.className = "info-middle";
+      middle.style.backgroundColor='white';
+      middle.innerHTML = content;
+      info.appendChild(middle);
+
+      // 定义底部内容
+      var bottom = document.createElement("div");
+      bottom.className = "info-bottom";
+      bottom.style.position = 'relative';
+      bottom.style.top = '0px';
+      bottom.style.margin = '0 auto';
+      var sharp = document.createElement("img");
+      sharp.src = "http://webapi.amap.com/images/sharp.png";
+      bottom.appendChild(sharp);
+      info.appendChild(bottom);
+      return info;
+    }
+
+    //关闭信息窗体
+    function closeInfoWindow(){
+      map.clearInfoWindow();
+    }
     markers.push(marker);
   });
 
@@ -26,6 +82,91 @@ function drawMarkers(map, posts) {
     LbsApp.cluster = new AMap.MarkerClusterer(map,markers);
   });
 }
+
+
+
+function MyDrawMarkers(map, posts) {
+  var markers= [];
+
+  posts.forEach(function (post) {
+    var markerPosition = new AMap.LngLat(post.lng, post.lat);
+    var marker = new AMap.Marker({
+      //基点位置
+      position:markerPosition,
+      //marker图标，直接传递地址url
+      icon:"http://developer.amap.com/wp-content/uploads/2014/06/marker.png",
+      //相对于基点的位置
+      offset:{x:-8, y:-34}
+    });
+    marker.setTitle(post.text);
+    marker.setContent(post.time);
+    AMap.event.addListener(marker,'click',function(){
+       infoWindow.open(map,marker.getPosition());
+     });
+     //实例化信息窗体
+    var infoWindow = new AMap.InfoWindow({
+        isCustom:true,  //使用自定义窗体
+        content:createInfoWindow(`${post.time}<span style="font-size:11px;color:#F00;"></span>`,`<img src='http://tpc.googlesyndication.com/simgad/5843493769827749134' style='position:relative;float:left;margin:0 5px 5px 0;'>地址：${post.location}<br/><br/>${post.text}`),
+        offset:new AMap.Pixel(16, -45)//-113, -140
+      });
+
+    //构建自定义信息窗体
+    function createInfoWindow(title,content){
+      var info = document.createElement("div");
+      info.className = "info";
+
+      //可以通过下面的方式修改自定义窗体的宽高
+      //info.style.width = "400px";
+
+      // 定义顶部标题
+      var top = document.createElement("div");
+      var titleD = document.createElement("div");
+      var closeX = document.createElement("img");
+      top.className = "info-top";
+      titleD.innerHTML = title;
+      closeX.src = "http://webapi.amap.com/images/close2.gif";
+      closeX.onclick = closeInfoWindow;
+
+      top.appendChild(titleD);
+      top.appendChild(closeX);
+      info.appendChild(top);
+
+
+      // 定义中部内容
+      var middle = document.createElement("div");
+      middle.className = "info-middle";
+      middle.style.backgroundColor='white';
+      middle.innerHTML = content;
+      info.appendChild(middle);
+
+      // 定义底部内容
+      var bottom = document.createElement("div");
+      bottom.className = "info-bottom";
+      bottom.style.position = 'relative';
+      bottom.style.top = '0px';
+      bottom.style.margin = '0 auto';
+      var sharp = document.createElement("img");
+      sharp.src = "http://webapi.amap.com/images/sharp.png";
+      bottom.appendChild(sharp);
+      info.appendChild(bottom);
+      return info;
+    }
+
+    //关闭信息窗体
+    function closeInfoWindow(){
+      map.clearInfoWindow();
+    }
+    markers.push(marker);
+  });
+
+  if (LbsApp.cluster) {
+    LbsApp.cluster.setMap(null);
+  }
+  map.plugin(["AMap.MarkerClusterer"],function(){
+    LbsApp.cluster = new AMap.MarkerClusterer(map,markers);
+  });
+}
+
 
 var mapControllers = angular.module('mapControllers', []);
 
@@ -90,6 +231,36 @@ mapControllers.controller('InitLoadCtrl', ['$scope', '$http',function($scope, $h
         drawMarkers(LbsApp.map, posts);
       });
     }).click();
+    $('#my-map').click(function (e) {
+      console.log("aaa");
+      LbsApp.api.getUserMap()
+      .then(function (res) {
+        console.log(res);
+        var map = res.map.sort(function (a, b) {
+          var atime = new Date(a.time);
+          var btime = new Date(b.time);
+          return atime.getTime() - btime.getTime();
+        });
+        console.log(map);
+        function addLine() {
+      		   var lineArr = new Array();//创建线覆盖物节点坐标数组
+             for (var i = 0; i < map.length; i++) {
+               lineArr.push(new AMap.LngLat(map[i].lng, map[i].lat));
+             }
+            polyline = new AMap.Polyline({
+      			   path:lineArr, //设置线覆盖物路径
+      			   strokeColor:"#3366FF", //线颜色
+      			   strokeOpacity:1, //线透明度
+      			   strokeWeight:5, //线宽
+      			   strokeStyle:"solid", //线样式
+      			   strokeDasharray:[10,5] //补充线样式
+      		   });
+      		   polyline.setMap(LbsApp.map);
+		    }
+        MyDrawMarkers(LbsApp.map, res.map);
+        addLine();
+      });
+    });
 }]);
 
 mapControllers.controller('SearchCtrl', ['$scope', '$http',function($scope, $http) {
@@ -118,7 +289,7 @@ mapControllers.controller('SearchCtrl', ['$scope', '$http',function($scope, $htt
 		    var geo = data.poiList.pois[0].location
 		    var lng = geo.lng;
         var lat = geo.lat;
-        LbsApp.api.getNearBy(lng, lat, 5000, 100)
+        LbsApp.api.getNearBy(lng, lat)
         .then(function (res) {
           console.log(res);
           LbsApp.mapInitialize(LbsApp.map, lng, lat, 13);
@@ -180,7 +351,7 @@ mapControllers.controller('AddmsgCtrl', ['$scope', '$http',function($scope, $htt
               }
             })
             .then(function (pos) {
-              return LbsApp.api.getNearBy(pos.lng, pos.lat, 5000, 100);
+              return LbsApp.api.getNearBy(pos.lng, pos.lat);
             })
             .then(function (res) {
               drawMarkers(LbsApp.map, res.posts);
@@ -212,6 +383,7 @@ mapControllers.controller('registryCtrl', ['$scope', '$http', function($scope, $
               $('#registry-loader').removeClass("active");
             } else {
               $('#registry-loader').removeClass("active");
+              console.log(res);
             }
           })
           return false;
@@ -241,6 +413,7 @@ mapControllers.controller('loginCtrl', ['$scope', '$http', function($scope, $htt
               localStorage['has-been-login'] = 1
             } else {
               $('#login-loader').removeClass("active");
+              console.log(res);
             }
           })
           return false;
@@ -258,6 +431,13 @@ $('#logout').click(function(e) {
       document.querySelector("#regis").style.display = 'inherit';
       document.querySelector("#login").style.display = 'inherit';
       localStorage['has-been-login'] = 0
+      console.log(polyline);
+      polyline.setMap(null);
+      LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
+        drawMarkers(LbsApp.map, posts);
+      $('#login-loader').addClass("active");
+      setTimeOut($('#login-loader').removeClass("active"), 1000);
+      });
     }
   })
 });

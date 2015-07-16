@@ -10,7 +10,6 @@
 </head>
 
 <body>
-
   <div class="ui page vertically padded grid">
 
     <!-- header margin -->
@@ -33,7 +32,6 @@
       </div>
     </div>
   </div>
-
     <div class="ui inverted menu">
         <div class="header item">你在哪兒</div>
          <div class="left menu">
@@ -98,12 +96,12 @@
        </div>
        <div class="content">
          <div class="ui form">
-           <form id='post-data' class="" action="/post" method="POST" enctype="multipart/form-data">
+           <form id='post-data' method="POST" enctype="multipart/form-data">
              <div class="newMsg">
 
                <div class="description">你现在位于：
                </div>
-               <input type="text" name="location" value="{{newMsg.address}}" disabled></input>
+               <input type="text" name="location" value="{{newMsg.address}}" ></input>
                <input type="text" name="lng" value="{{newMsg.posNum.lng}}" hidden></input>
               <input type="text" name="lat" value="{{newMsg.posNum.lat}}" hidden></input>
                <div class="ui icon button">
