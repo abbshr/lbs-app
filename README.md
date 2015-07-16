@@ -4,20 +4,36 @@
 
 "昊哥走天下"属于B/S架构的Web应用, 因此需要服务器支持.
 
+# 关键字
+
+Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular.js, SemanticUI
+
 # TODO
 
-+ 调用设备照相机
-+ 调整UI布局
++ 增加个人中心
++ 增加分享回复
++ 查看个人地图时屏幕中心定位到点集中心
++ 对叠加点增加分散查看功能
++ 在个人地图的路线上添加方向箭头
+
+# Log
+
++ 修复定位标记叠加bug
++ 修复定位到当前时放缩级别跳跃bug
+
 
 ## 服务器部署
 
-RethinkDB
-iojs
-CoffeeScript
-Angular.js
-SemanticUI
-
 ```sh
+# 安装libcap依赖以允许普通用户使用1024以下的端口
+sudo apt-get install libcap2 libcap2-bin
+
+# 允许node使用1024以下端口
+sudo setcap cap_net_bind_service=+ep /usr/local/bin/iojs
+
+# 安装rethinkdb
+
+# clone repo
 git clone <this repo>
 cd lbs-app
 
