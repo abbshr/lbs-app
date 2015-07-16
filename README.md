@@ -4,6 +4,9 @@
 
 "昊哥走天下"属于B/S架构的Web应用, 因此需要服务器支持.
 
+# 声明
+在此提前声明, UI设计乃昊哥所为, 在下并未负责该工作亦未对其做任何修改, 因此如果发现了不和谐请不要对我的审美产生任何怀疑<3
+
 # 关键字
 
 Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular.js, SemanticUI
