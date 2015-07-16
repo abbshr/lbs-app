@@ -20,6 +20,7 @@ module.exports = (app) ->
     else
       res.json error: (new Error 'not login!').toString()
   .post (req, res, next) ->
+    console.log req.body
     req.body.time = new Date
     req.body.ip = req.ip
     req.body.userId = req.session.user?.id
@@ -65,6 +66,7 @@ module.exports = (app) ->
   # GET => /map?user=haoge
   apiRouter.get '/map', (req, res, next) ->
     User.find req.query["user"] ? req.session.user.username, (err, user) ->
+      console.log user
       if err?
         res.json error: err
       else

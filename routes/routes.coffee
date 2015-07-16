@@ -21,7 +21,8 @@ module.exports = (app) ->
 
         if shadow is user.password
           req.session.user = user
-          res.json success: yes
+          delete user.password
+          res.json success: yes, user: user
         else
           res.json error: (new Error "incorrect password").toString()
       else

@@ -17,7 +17,6 @@ Post.defineStatic "nearBy", (options, callback) ->
     index: "geopoint"
     maxResults: options.limit
     maxDist: options.distance
-  .without 'image', 'text'
   .run()
   .then (posts) ->
     callback null, (post.doc for post in posts)
@@ -26,10 +25,9 @@ Post.defineStatic "nearBy", (options, callback) ->
 
 Post.defineStatic "userMap", (userId, callback) ->
   @filter userId: userId
-  .without 'image', 'text'
   .run()
   .then (posts) ->
-    callback null, (post.doc for post in posts)
+    callback null, posts
   .error (err) ->
     callback err
 
