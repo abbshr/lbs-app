@@ -11,7 +11,15 @@
   };
 
   LbsApp.map.plugin('AMap.Geolocation', function() {
-    return console.log('加载geolocation控件');
+    if (LbsApp.locationMarker == null) {
+      LbsApp.locationMarker = new AMap.Geolocation({
+        enableHighAccuracy: true,
+        timeout: 6000,
+        convert: true,
+        zoomToAccuracy: true
+      });
+    }
+    return LbsApp.map.addControl(LbsApp.locationMarker);
   });
 
   info = function(lng, lat, accuracy) {
@@ -35,15 +43,6 @@
     lng = 126.642464;
     lat = 45.756967;
     accuracy = Infinity;
-    if (this.locationMarker == null) {
-      this.locationMarker = new AMap.Geolocation({
-        enableHighAccuracy: true,
-        timeout: 6000,
-        convert: true,
-        zoomToAccuracy: true
-      });
-    }
-    map.addControl(this.locationMarker);
     thirdPardApi = new Promise(function(resolve) {
       AMap.event.addListenerOnce(LbsApp.locationMarker, 'complete', function(e) {
         lng = e.position.getLng();
@@ -151,13 +150,10 @@
   LbsApp.setCurrentLocation = function(map, geo, callback) {
     return this.getCurrency(map, geo).then(function(pos) {
       var accuracy, lat, lng;
-      console.log(pos);
       lng = pos.lng, lat = pos.lat, accuracy = pos.accuracy;
       console.info(info(lng, lat, accuracy));
-      LbsApp.mapInitialize(map, lng, lat, 13);
       return LbsApp.api.getNearBy(lng, lat);
     }).then(function(data) {
-      console.log(data);
       if (data.success) {
         return callback(null, data.posts);
       }

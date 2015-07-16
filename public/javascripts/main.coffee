@@ -7,7 +7,15 @@ LbsApp =
   # 地理位置对象
   geo: new Geo timeout: 1000
 
-LbsApp.map.plugin 'AMap.Geolocation', () -> console.log '加载geolocation控件'
+# 加载地图定位插件
+LbsApp.map.plugin 'AMap.Geolocation', () ->
+  # 初始化定位标记
+  LbsApp.locationMarker ?= new AMap.Geolocation
+    enableHighAccuracy: yes
+    timeout: 6000
+    convert: yes
+    zoomToAccuracy: yes
+  LbsApp.map.addControl LbsApp.locationMarker
 
 # debug information
 info = (lng, lat, accuracy) ->
@@ -30,14 +38,6 @@ LbsApp.getCurrency = (map, geo) ->
   lng = 126.642464
   lat = 45.756967
   accuracy = Infinity
-
-  @locationMarker ?= new AMap.Geolocation
-    enableHighAccuracy: yes
-    timeout: 6000
-    convert: yes
-    zoomToAccuracy: yes
-
-  map.addControl @locationMarker
 
   thirdPardApi = new Promise (resolve) ->
 
@@ -124,15 +124,11 @@ LbsApp.api.logout = () ->
 LbsApp.setCurrentLocation = (map, geo, callback) ->
   @getCurrency map, geo
   .then (pos) ->
-    console.log pos
     { lng, lat, accuracy } = pos
     console.info info(lng, lat, accuracy)
-    # 重置地图中心点
-    LbsApp.mapInitialize map, lng, lat, 13
-    # 获取附近1000米内的50条分享
+    # 获取附近10000米内的200条分享
     LbsApp.api.getNearBy lng, lat
   .then (data) ->
-    console.log data
     if data.success
       callback null, data.posts
   .catch (err) ->
