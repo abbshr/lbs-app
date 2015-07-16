@@ -90,6 +90,7 @@ function drawMarkers(map, posts, isTimeMap) {
 var mapControllers = angular.module('mapControllers', []);
 
 mapControllers.controller('InitLoadCtrl', ['$scope', '$http', function ($scope, $http) {
+  $('.amap-geo').remove();
   $('#current-btn').click(function (e) {
     LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
       if (err) {
