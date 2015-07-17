@@ -89,12 +89,22 @@ function drawMarkers(map, posts, isTimeMap) {
 
 var mapControllers = angular.module('mapControllers', []);
 
-mapControllers.controller('InitLoadCtrl', ['$scope', '$http', function ($scope, $http) {
+
+mapControllers.controller('infoCtrl', ['$rootScope', '$scope', 'notificationService', function ($rootScope, $scope, notificationService) {
+  $('.ui.message').hide();
+}]);
+
+mapControllers.controller('InitLoadCtrl', ['$scope', 'notificationService', function ($scope, notificationService) {
   $('.amap-geo').remove();
+  $('.amap-logo').remove();
+  $('.amap-copyright').remove();
+  LbsApp.map.setFeatures(['bg', 'point', 'building']);
+  LbsApp.map.setMapStyle('fresh');
   $('#current-btn').click(function (e) {
     LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
       if (err) {
         console.error("当前位置定位失败", err);
+        notificationService.notify('error', "当前位置定位失败", err.message);
       } else {
         drawMarkers(LbsApp.map, posts);
       }
@@ -129,12 +139,13 @@ mapControllers.controller('InitLoadCtrl', ['$scope', '$http', function ($scope, 
       LbsApp.polyline.setMap(LbsApp.map);
     })
     .catch(function (err) {
-      console.error("获取个人地图失败", err);
+      console.error("获取个人地图失败", err.message);
+      notificationService.notify('error', "获取个人地图失败", err.message);
     });
   });
 }]);
 
-mapControllers.controller('SearchCtrl', ['$scope', '$http', function ($scope, $http) {
+mapControllers.controller('SearchCtrl', ['$scope', 'notificationService', function ($scope, notificationService) {
   AMap.service(["AMap.PlaceSearch"], function() {
     var MSearch = new AMap.PlaceSearch({ //构造地点查询类
       pageSize:10,
@@ -163,9 +174,11 @@ mapControllers.controller('SearchCtrl', ['$scope', '$http', function ($scope, $h
           })
           .catch(function (err) {
             console.error("无法获取该地点周边分享", err);
+            notificationService.notify('error', "无法获取该地点周边分享", err.message);
           });
         } else {
           console.error("地点查询失败", result);
+          notificationService.notify('error', "地点查询失败", result);
         }
       });
 
@@ -175,7 +188,7 @@ mapControllers.controller('SearchCtrl', ['$scope', '$http', function ($scope, $h
 }]);
 
 
-mapControllers.controller('postCtrl', ['$scope', '$http', function ($scope, $http) {
+mapControllers.controller('postCtrl', ['$scope', 'notificationService', function ($scope, notificationService) {
 
   $scope.newMsg={};
   LbsApp.getCurrency(LbsApp.map, LbsApp.geo)
@@ -202,6 +215,7 @@ mapControllers.controller('postCtrl', ['$scope', '$http', function ($scope, $htt
   })
   .catch(function (err) {
     console.error("无法在地图上定位当前位置", err);
+    notificationService.notify('error', "无法在地图上定位当前位置", err);
   });
 
 
@@ -212,12 +226,11 @@ mapControllers.controller('postCtrl', ['$scope', '$http', function ($scope, $htt
         $('#post-loader').addClass("active");
         LbsApp.api.createPost(document.querySelector("#form-post"))
         .then(function (res) {
+          $('#post-module').modal('hide');
+          $('#post-loader').removeClass("active");
           if (res.success) {
-            $('#post-module').modal('hide');
-            $('#post-loader').removeClass("active");
             return LbsApp.getCurrency(LbsApp.map, LbsApp.geo)
           } else {
-            $('#post-loader').removeClass("active");
             throw new Error(res.error);
           }
         })
@@ -228,6 +241,7 @@ mapControllers.controller('postCtrl', ['$scope', '$http', function ($scope, $htt
           drawMarkers(LbsApp.map, res.posts);
         })
         .catch(function (err) {
+          notificationService.notify('error', "发布失败", err.message);
           console.error("发布失败", err);
         });
         return false;
@@ -238,7 +252,7 @@ mapControllers.controller('postCtrl', ['$scope', '$http', function ($scope, $htt
 
 
 
-mapControllers.controller('registryCtrl', ['$scope', '$http', function ($scope, $http) {
+mapControllers.controller('registryCtrl', ['$scope', 'notificationService', function ($scope, notificationService) {
   if (localStorage['has-been-login'] == '1') {
     document.querySelector("#registry-btn").style.display = 'none';
   } else {
@@ -251,11 +265,14 @@ mapControllers.controller('registryCtrl', ['$scope', '$http', function ($scope, 
         $('#registry-loader').addClass("active");
         LbsApp.api.registy(document.querySelector("#form-registry"))
         .then(function (res) {
-          if (res.success)
-            $('#registry-module').modal('hide');
-          else
+          if (res.success) {
+            notificationService.notify('positive', "注册成功", '请登录以执行后续操作');
+          } else {
             console.error("注册失败", res.error);
+            notificationService.notify('error', "注册失败", res.error);
+          }
           $('#registry-loader').removeClass("active");
+          $('#registry-module').modal('hide');
         });
         return false;
       }
@@ -263,7 +280,7 @@ mapControllers.controller('registryCtrl', ['$scope', '$http', function ($scope, 
   });
 }]);
 
-mapControllers.controller('loginCtrl', ['$scope', '$http', function ($scope, $http) {
+mapControllers.controller('loginCtrl', ['$scope', '$http', function ($scope, notificationService) {
   if (localStorage['has-been-login'] == '1') {
     document.querySelector("#login-btn").style.display = 'none';
   }
@@ -275,16 +292,16 @@ mapControllers.controller('loginCtrl', ['$scope', '$http', function ($scope, $ht
           LbsApp.api.login(document.querySelector("#form-login"))
           .then(function (res) {
             if (res.success) {
-              $('#login-module').modal('hide');
-              $('#login-loader').removeClass("active");
               document.querySelector("#logout-btn").style.display = 'inherit';
               document.querySelector("#registry-btn").style.display = 'none';
               document.querySelector("#login-btn").style.display = 'none';
               localStorage['has-been-login'] = 1
             } else {
-              $('#login-loader').removeClass("active");
-              console.error("登录失败:", res);
+              console.error("登录失败:", res.error);
+              notificationService.notify('error', "登录失败", res.error);
             }
+            $('#login-module').modal('hide');
+            $('#login-loader').removeClass("active");
           });
           return false;
         }
@@ -292,7 +309,7 @@ mapControllers.controller('loginCtrl', ['$scope', '$http', function ($scope, $ht
   });
 }]);
 
-mapControllers.controller('logoutCtrl', ['$scope', '$http', function ($scope, $http) {
+mapControllers.controller('logoutCtrl', ['$scope', 'notificationService', function ($scope, notificationService) {
   if (localStorage['has-been-login'] == '0') {
     document.querySelector("#logout-btn").style.display = 'none';
   }
@@ -311,14 +328,14 @@ mapControllers.controller('logoutCtrl', ['$scope', '$http', function ($scope, $h
                 document.querySelector("#logout-btn").style.display = 'none';
                 document.querySelector("#registry-btn").style.display = 'inherit';
                 document.querySelector("#login-btn").style.display = 'inherit';
-                $('#logout-module').modal('hide');
                 drawMarkers(LbsApp.map, posts);
               });
+            } else {
+              console.error("注销失败", res.error);
+              notificationService.notify('error', "注销失败", res.error);
             }
+            $('#logout-module').modal('hide');
             $('#logout-loader').removeClass("active");
-          })
-          .catch(function (err) {
-            console.error("注销失败", err);
           });
           return false;
         }

@@ -9,39 +9,67 @@
   </head>
 
   <body>
-    <div class="ui inverted menu">
-      <div class="header item">昊哥走天下!</div>
-      <div class="left menu">
-        <button id="current-btn" class="ui icon button">
-          <i class="marker icon"></i>
-        </button>
-        <button id="map-btn" class="ui inverted blue button active">我的地图</button>
-        <button id="post-btn" class="ui inverted green button active">添加足迹</button>
-        <button id="registry-btn" class="ui inverted orange button active">注册</button>
-        <button id="login-btn" class="ui inverted orange button active">登陆</button>
-        <button id="logout-btn" class="ui inverted orange button active">注销</button>
-      </div>
 
-      <div class="right menu">
-        <div class="item">
-          <form id='form-search' ng-controller="SearchCtrl" method="GET" enctype="multipart/form-data">
-            <div class="ui icon input">
-              <i class="search icon"></i>
-              <input id="go" type="text" placeholder="回车前往"></input>
+    <div class="ui column centered grid">
+      <!-- <div class="one column row"> -->
+        <div class="twelve wide column">
+          <div class="row">
+            <div class="ui grid">
+              <div class="row">
+              </div>
             </div>
-          </form>
+          </div>
+          <div class="ui floating message" ng-controller='infoCtrl'>
+            <div class="header"></div>
+            <p></p>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div id="map" style="height: 100%;">
-      <div class="ui icon input"> </div>
-    </div>
+      <!-- </div> -->
 
-    <div ng-controller="InitLoadCtrl" style="height: 100%;">
-      <div id="mapContainer" style="height: 100%;">
-        <div class="ui icon input"></div>
-      </div>
+      <!-- <div class="one column row"> -->
+        <div class="twelve wide column">
+          <div class="ui menu">
+            <div class="header item">昊哥走天下!</div>
+            <div class="left menu">
+              <button id="current-btn" class="ui icon button">
+                <i class="marker icon"></i>
+              </button>
+              <button id="map-btn" class="ui inverted blue button active">我的地图</button>
+              <button id="post-btn" class="ui inverted green button active">添加足迹</button>
+              <button id="registry-btn" class="ui inverted orange button active">注册</button>
+              <button id="login-btn" class="ui inverted orange button active">登陆</button>
+              <button id="logout-btn" class="ui inverted orange button active">注销</button>
+            </div>
+
+            <div class="right menu">
+              <div class="item">
+                <form id='form-search' ng-controller="SearchCtrl" method="GET" enctype="multipart/form-data">
+                  <div class="ui icon input">
+                    <i class="search icon"></i>
+                    <input id="go" type="text" placeholder="回车前往"></input>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      <!-- </div> -->
+
+      <!-- <div class="ui grid"> -->
+        <!-- <div class="row"> -->
+        <div class="twelve wide column">
+          <div class="ui piled segment">
+          <div ng-controller="InitLoadCtrl">
+            <div id="map" style="height: 510px;">
+              <div class="ui icon input"> </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <!-- </div> -->
+      <!-- </div> -->
+
     </div>
 
 
@@ -95,23 +123,28 @@
         <div id='registry-loader' class="ui disable inverted dimmer">
           <div class="ui text loader">正在注册</div>
         </div>
-        <form class="ui large form" id="form-registry" enctype="multipart/form-data">
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="user icon"></i>
-              <input type="text" name="username" placeholder="用户名"></input>
-            </div>
+        <div class="content">
+          <div class="description">
+            <form class="ui large form" id="form-registry" enctype="multipart/form-data">
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="user icon"></i>
+                  <input type="text" name="username" placeholder="用户名"></input>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="lock icon"></i>
+                  <input type="password" name="password" placeholder="密码"></input>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="lock icon"></i>
-              <input type="password" name="password" placeholder="密码"></input>
-            </div>
-          </div>
-        </form>
+        </div>
+
         <div class="actions">
           <div class="ui black deny button">取消</div>
-          <div class=" ui fluid large positive teal submit button">注册</div>
+          <div class="ui positive right labeled icon button submit">注册</div>
         </div>
       </div>
     </div>
@@ -122,29 +155,33 @@
       <div class="ui stacked segment">
         <h2 class="ui teal image header">
           <div class="content">
-            Log-in to your account
+            登录
           </div>
         </h2>
         <div id='login-loader' class="ui disable inverted dimmer">
           <div class="ui text loader">登录中</div>
         </div>
-        <form class="ui large form" id="form-login" enctype="multipart/form-data">
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="user icon"></i>
-              <input type="text" name="username" placeholder="用户名"></input>
+        <div class="content">
+          <div class="description">
+          <form class="ui large form" id="form-login" enctype="multipart/form-data">
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input type="text" name="username" placeholder="用户名"></input>
+              </div>
             </div>
-          </div>
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="lock icon"></i>
-              <input type="password" name="password" placeholder="密码"></input>
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="lock icon"></i>
+                <input type="password" name="password" placeholder="密码"></input>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
+      </div>
         <div class="actions">
           <div class="ui black deny button">取消</div>
-          <div class=" ui fluid large positive teal submit button">登录</div>
+          <div class="ui positive right labeled icon button submit">登录</div>
         </div>
       </div>
     </div>
@@ -174,6 +211,7 @@
     <script src="/javascripts/angularjs/angular-route.min.js"></script>
     <script src="/javascripts/angularjs/angular-resource.min.js"></script>
     <script src="/javascripts/angularjs/app.js"></script>
+    <script src="/javascripts/angularjs/services.js"></script>
 
     <script src="/javascripts/main.js"></script>
     <script src="/javascripts/angularjs/controllers.js"></script>
