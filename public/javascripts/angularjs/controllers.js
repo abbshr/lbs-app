@@ -321,21 +321,21 @@ mapControllers.controller('logoutCtrl', ['$scope', 'notificationService', functi
           $('#logout-loader').addClass("active");
           LbsApp.api.logout()
           .then(function (res) {
+            $('#logout-module').modal('hide');
+            $('#logout-loader').removeClass("active");
             if (res.success) {
+              document.querySelector("#logout-btn").style.display = 'none';
+              document.querySelector("#registry-btn").style.display = 'inherit';
+              document.querySelector("#login-btn").style.display = 'inherit';
               localStorage['has-been-login'] = 0;
               LbsApp.polyline && LbsApp.polyline.setMap(null);
               LbsApp.setCurrentLocation(LbsApp.map, LbsApp.geo, function (err, posts) {
-                document.querySelector("#logout-btn").style.display = 'none';
-                document.querySelector("#registry-btn").style.display = 'inherit';
-                document.querySelector("#login-btn").style.display = 'inherit';
                 drawMarkers(LbsApp.map, posts);
               });
             } else {
               console.error("注销失败", res.error);
               notificationService.notify('error', "注销失败", res.error);
             }
-            $('#logout-module').modal('hide');
-            $('#logout-loader').removeClass("active");
           });
           return false;
         }
