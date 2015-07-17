@@ -5,7 +5,9 @@
 "昊哥走天下"属于B/S架构的Web应用, 因此需要服务器支持.
 
 # 屏幕截图
-![a]()
+![a](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/a.png)
+
+![b](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/b.png)
 
 # 关键字
 
