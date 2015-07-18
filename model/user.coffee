@@ -22,7 +22,7 @@ User.defineStatic 'getMap', (userId, callback) ->
   .run()
   .then (user) ->
     for post in user.posts
-      post.username = user.username
+      post.user = username: user.username
       post
   .then (map) ->
     callback null, map
