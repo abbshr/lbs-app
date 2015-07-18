@@ -85,13 +85,13 @@ module.exports = (app) ->
     else
       res.json error: "你尚未登录"
   .get (req, res, next) ->
-    User.getMap req.userId, (err, map) ->
+    User.getMap req.userId, (err, user) ->
       if err?
         res.json error: err.message
       else
         res.json
           success: yes
-          map: map
+          map: user.posts
 
   # 挂载到app
   app.use '/api', apiRouter

@@ -9,7 +9,6 @@ module.exports = User = thinky.createModel "User",
 
 User.defineStatic "find", (username, callback) ->
   @filter r.row('username').eq username
-  .pluck "id", "username", "password"
   .run()
   .then (user) ->
     callback null, user[0]
@@ -19,8 +18,13 @@ User.defineStatic "find", (username, callback) ->
 User.defineStatic 'getMap', (userId, callback) ->
   @get userId
   .getJoin()
+  .without 'id', 'password'
   .run()
   .then (user) ->
-    callback null, user.posts
+    for post in user.posts
+      post.username = user.username
+      post
+  .then (map) ->
+    callback null, map
   .catch (err) ->
     callback err

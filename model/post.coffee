@@ -10,22 +10,15 @@ module.exports = Post = thinky.createModel "Post",
   ip: type.string()
   text: type.string()
   image: type.buffer()
-  userId: type.string()
 
 Post.defineStatic "nearBy", (options, callback) ->
   @getNearest r.point(options.position...),
     index: "geopoint"
     maxResults: options.limit
     maxDist: options.distance
-  .getJoin()
-  .run()
-  .then (posts) ->
-    callback null, (post.doc for post in posts)
-  .error (err) ->
-    callback err
-
-Post.defineStatic "userMap", (userId, callback) ->
-  @filter userId: userId
+  .without 'dist'
+  .getField 'doc'
+  .without 'geopoint'
   .getJoin()
   .run()
   .then (posts) ->

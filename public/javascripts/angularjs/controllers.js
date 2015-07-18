@@ -6,7 +6,7 @@ function drawMarkers(map, posts, isTimeMap) {
   var markers = posts.map(function (post) {
     //构建信息窗体中显示的内容
 	  var info = [];
-		info.push(`<div><div style=\"padding:0px 0px 0px 4px;\"><b>${post.userId}</b>`);
+		info.push(`<div><div style=\"padding:0px 0px 0px 4px;\"><b>${post.username}</b>`);
 		info.push(`时间: ${post.time}`);
     info.push(`地点: ${post.location}`);
     if (post.image)
