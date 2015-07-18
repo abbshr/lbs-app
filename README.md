@@ -28,12 +28,12 @@ Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular
 + 对叠加点增加分散查看功能
 + 在个人地图的路线上添加方向箭头
 + 修复图片显示问题
++ 使用RethinkDB changeFeed刷新地图数据
 
 # Log
 
 + 修复定位标记叠加bug
 + 修复定位到当前时放缩级别跳跃bug
-
 
 ## 服务器部署
 
