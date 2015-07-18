@@ -9,6 +9,13 @@
 
 ![b](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/b.png)
 
+![c](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/c.png)
+
+![d](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/d.png)
+
+![e](https://raw.githubusercontent.com/abbshr/lbs-app/master/public/images/e.png)
+
+
 # 关键字
 
 Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular.js, SemanticUI
