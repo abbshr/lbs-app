@@ -15,3 +15,12 @@ User.defineStatic "find", (username, callback) ->
     callback null, user[0]
   .error (err) ->
     callback err
+
+User.defineStatic 'getMap', (userId, callback) ->
+  @get userId
+  .getJoin()
+  .run()
+  .then (user) ->
+    callback null, user.posts
+  .catch (err) ->
+    callback err

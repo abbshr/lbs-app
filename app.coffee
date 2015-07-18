@@ -44,7 +44,7 @@ app.use logger 'dev'
 app.use express.static path.join(__dirname, 'public')
 app.use bodyParser.json()
 app.use bodyParser.urlencoded()
-app.use multer()
+app.use multer inMemory: yes
 app.use cookieParser()
 app.use session app.get 'cookie'
 

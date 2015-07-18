@@ -29,27 +29,32 @@
 
       <!-- <div class="one column row"> -->
         <div class="twelve wide column">
-          <div class="ui menu">
-            <div class="header item">昊哥走天下!</div>
-            <div class="left menu">
-              <button id="current-btn" class="ui icon button">
-                <i class="marker icon"></i>
-              </button>
-              <button id="map-btn" class="ui inverted blue button active">我的地图</button>
-              <button id="post-btn" class="ui inverted green button active">添加足迹</button>
-              <button id="registry-btn" class="ui inverted orange button active">注册</button>
-              <button id="login-btn" class="ui inverted orange button active">登陆</button>
-              <button id="logout-btn" class="ui inverted orange button active">注销</button>
+          <div class="ui menu" ng-controller='headerCtrl'>
+            <div class="header item">
+              <a href="/">Hugo</a>
             </div>
-
+            <a id="post-btn" class="item" data-content="添加足迹" data-variation="inverted" data-position="bottom center">
+              <i class="write icon"></i>
+            </a>
             <div class="right menu">
-              <div class="item">
-                <form id='form-search' ng-controller="SearchCtrl" method="GET" enctype="multipart/form-data">
-                  <div class="ui icon input">
-                    <i class="search icon"></i>
-                    <input id="go" type="text" placeholder="回车前往"></input>
-                  </div>
-                </form>
+              <a id="map-btn" class="item">
+                <i class="marker icon"></i>
+                我的地图
+              </a>
+              <a id="registry-btn" class="item">注册</a>
+              <a id="login-btn" class="item">登录</a>
+              <a id="logout-btn" class="item">注销</a>
+              <a id="current-btn" class="item" data-content="当前位置" data-variation="inverted" data-position="bottom center">
+                <i class="crosshairs icon"></i>
+              </a>
+              <div class="ui category search item">
+                <div class="ui transparent icon input">
+                  <form id='form-search' ng-controller="SearchCtrl" method="GET" enctype="multipart/form-data">
+                    <input id='location' class="prompt" type="text" placeholder="搜索地点..."></input>
+                  </form>
+                  <i id='search' class="search link icon"></i>
+                </div>
+                <div class="results"></div>
               </div>
             </div>
           </div>
@@ -60,7 +65,7 @@
         <!-- <div class="row"> -->
         <div class="twelve wide column">
           <div class="ui piled segment">
-          <div ng-controller="InitLoadCtrl">
+          <div ng-controller="mapCtrl">
             <div id="map" style="height: 510px;">
               <div class="ui icon input"> </div>
             </div>
@@ -74,41 +79,40 @@
 
 
     <!--发布新消息的页面-->
-    <div class="ui modal" id="post-module" ng-controller="postCtrl">
-      <i class="close icon"></i>
-      <div class="ui segment">
-         <div class="header">分享当前位置</div>
-         <div id='post-loader' class="ui disable inverted dimmer">
-           <div class="ui text loader">正在发布</div>
-         </div>
-         <div class="content">
-           <div class="ui form">
-             <form id='form-post'>
-                <div class="newMsg">
-                   <div class="description">你现在位于：{{newMsg.address}}</div>
-                   <input type="text" name="location" value="{{newMsg.address}}" hidden></input>
-                   <input type="text" name="lng" value="{{newMsg.posNum.lng}}" hidden></input>
-                   <input type="text" name="lat" value="{{newMsg.posNum.lat}}" hidden></input>
-                   <div class="ui icon button">
-                     添张照片
-                     <i class="photo icon"></i>
-                     <input id='bin' type="file" name="image" style='display:none;'></input>
-                   </div>
-                   <div class="field">
-                     <label>说点什么：</label>
-                     <textarea ng-model="newMsg.msg" name='text'></textarea>
-                   </div>
-                </div>
-             </form>
-          </div>
-        </div>
 
-        <div class="actions">
-          <div class="ui black deny button">取消</div>
-          <div id='submit' class="ui positive right labeled icon button">
-            确认发布
-            <i class="checkmark icon"></i>
-          </div>
+    <div class="ui modal" id="post-module" ng-controller="postCtrl">
+      <div class="header">分享当前位置</div>
+       <div class="content">
+         <div class="ui form">
+           <form id='form-post'>
+             <input type="text" name="location" value="{{newMsg.address}}" hidden></input>
+             <input type="text" name="lng" value="{{newMsg.posNum.lng}}" hidden></input>
+             <input type="text" name="lat" value="{{newMsg.posNum.lat}}" hidden></input>
+             <div class="inline field">
+               <label>添加照片:</label>
+               <div id='file-btn' class="ui icon button">
+                 <i class="photo icon"></i>
+               </div>
+               <input id='bin' type="file" name="image" style='display:none;'></input>
+             </div>
+
+             <div class="field">
+               <label>说点什么：</label>
+               <textarea ng-model="newMsg.msg" name='text'></textarea>
+             </div>
+             <div class="inline field">
+               <label>你的位置：</label>
+                 {{newMsg.address}}
+             </div>
+           </form>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="ui black deny button">取消</div>
+        <div id='submit' class="ui positive right labeled icon button">
+          确认发布
+          <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
@@ -116,35 +120,29 @@
 
     <!--注册-->
     <div class="ui modal" id="registry-module" ng-controller="registryCtrl">
-      <div class="ui stacked segment">
-        <h2 class="ui teal image header">
-          <div class="content">注册</div>
-        </h2>
-        <div id='registry-loader' class="ui disable inverted dimmer">
-          <div class="ui text loader">正在注册</div>
-        </div>
-        <div class="content">
-          <div class="description">
-            <form class="ui large form" id="form-registry" enctype="multipart/form-data">
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="user icon"></i>
-                  <input type="text" name="username" placeholder="用户名"></input>
-                </div>
-              </div>
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="lock icon"></i>
-                  <input type="password" name="password" placeholder="密码"></input>
-                </div>
-              </div>
-            </form>
+      <div class="header">注册</div>
+      <div class="content">
+        <form class="ui large form" id="form-registry" enctype="multipart/form-data">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input type="text" name="username" placeholder="用户名"></input>
+            </div>
           </div>
-        </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="lock icon"></i>
+              <input type="password" name="password" placeholder="密码"></input>
+            </div>
+          </div>
+        </form>
+      </div>
 
-        <div class="actions">
-          <div class="ui black deny button">取消</div>
-          <div class="ui positive right labeled icon button submit">注册</div>
+      <div class="actions">
+        <div class="ui black deny button">取消</div>
+        <div class="ui positive right labeled icon button submit">
+          注册
+          <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
@@ -152,53 +150,40 @@
 
     <!-- 登陆 -->
     <div class="ui modal" id="login-module" ng-controller="loginCtrl">
-      <div class="ui stacked segment">
-        <h2 class="ui teal image header">
-          <div class="content">
-            登录
+      <div class="header">登录</div>
+      <div class="content">
+        <form class="ui large form" id="form-login" enctype="multipart/form-data">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input type="text" name="username" placeholder="用户名"></input>
+            </div>
           </div>
-        </h2>
-        <div id='login-loader' class="ui disable inverted dimmer">
-          <div class="ui text loader">登录中</div>
-        </div>
-        <div class="content">
-          <div class="description">
-          <form class="ui large form" id="form-login" enctype="multipart/form-data">
-            <div class="field">
-              <div class="ui left icon input">
-                <i class="user icon"></i>
-                <input type="text" name="username" placeholder="用户名"></input>
-              </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="lock icon"></i>
+              <input type="password" name="password" placeholder="密码"></input>
             </div>
-            <div class="field">
-              <div class="ui left icon input">
-                <i class="lock icon"></i>
-                <input type="password" name="password" placeholder="密码"></input>
-              </div>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
-        <div class="actions">
-          <div class="ui black deny button">取消</div>
-          <div class="ui positive right labeled icon button submit">登录</div>
+
+      <div class="actions">
+        <div class="ui black deny button">取消</div>
+        <div class="ui positive right labeled icon button submit">
+          注册
+          <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
 
     <!-- 注销 -->
     <div class="ui modal" id="logout-module" ng-controller="logoutCtrl">
-      <div class="ui segment">
-        <div class="ui row">
-          <div class="content">
-            <div class="description">
-              注销...
-            </div>
-            <div id='logout-loader' class="ui disable inverted dimmer">
-              <div class="ui text loader">正在注销</div>
-            </div>
-          </div>
-        </div>
+      <div class="content">
+        注销
+      </div>
+      <div id='logout-loader' class="ui inverted dimmer">
+        <div class="ui text loader">正在注销</div>
       </div>
     </div>
 

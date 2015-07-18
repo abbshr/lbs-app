@@ -16,27 +16,38 @@ module.exports = (app) ->
   # POST => /post
   .post (req, res, next) ->
     if req.session.user?.id?
-      next()
+      User.get req.session.user.id
+      .getJoin()
+      .run()
+      .then (user) ->
+        req.user = user
+        next()
     else
-      res.json error: (new Error 'not login!').toString()
+      res.json error: '你尚未登录'
   .post (req, res, next) ->
     req.body.time = new Date
     req.body.ip = req.ip
-    req.body.userId = req.session.user?.id
     req.body.geopoint = [+req.body.lng, +req.body.lat]
-    new Post req.body
-    .save()
+    req.body.image = req.files.image?.buffer
+    post = new Post req.body
+    user = req.user
+    user.posts.push post
+    user.saveAll()
+    .then (user) ->
+      delete user.posts
+      post.user = user
+      post.saveAll()
     .then (post) ->
       res.json success: yes
     .error (err) ->
-      res.json error: err
+      res.json error: err.message
 
   # 单个po详细信息
   # GET => /post?postId=xxx
   .get (req, res, next) ->
     Post.getPost req.query["postId"], (err, post) ->
       if err?
-        res.json error: err
+        res.json error: err.message
       else
         res.json
           success: yes
@@ -55,7 +66,7 @@ module.exports = (app) ->
       limit: limit
     , (err, posts) ->
       if err?
-        res.json error: err
+        res.json error: err.message
       else
         res.json
           success: yes
@@ -66,25 +77,21 @@ module.exports = (app) ->
   apiRouter.route '/map'
   .get (req, res, next) ->
     if req.query["user"]
-      req.username = req.query["user"]
+      req.userId = req.query["user"]
       next()
     else if req.session.user?
-      req.username = req.session.user.username
+      req.userId = req.session.user.id
       next()
     else
-      res.json error: (new Error "not login!").toString()
+      res.json error: "你尚未登录"
   .get (req, res, next) ->
-    User.find req.username, (err, user) ->
+    User.getMap req.userId, (err, map) ->
       if err?
-        res.json error: err
+        res.json error: err.message
       else
-        Post.userMap user.id, (err, map) ->
-          if err?
-            res.json error: err
-          else
-            res.json
-              success: yes
-              map: map
+        res.json
+          success: yes
+          map: map
 
   # 挂载到app
   app.use '/api', apiRouter

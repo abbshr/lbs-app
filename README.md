@@ -20,6 +20,7 @@ Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular
 + 查看个人地图时屏幕中心定位到点集中心
 + 对叠加点增加分散查看功能
 + 在个人地图的路线上添加方向箭头
++ 修复图片显示问题
 
 # Log
 

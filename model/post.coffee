@@ -17,6 +17,7 @@ Post.defineStatic "nearBy", (options, callback) ->
     index: "geopoint"
     maxResults: options.limit
     maxDist: options.distance
+  .getJoin()
   .run()
   .then (posts) ->
     callback null, (post.doc for post in posts)
@@ -25,6 +26,7 @@ Post.defineStatic "nearBy", (options, callback) ->
 
 Post.defineStatic "userMap", (userId, callback) ->
   @filter userId: userId
+  .getJoin()
   .run()
   .then (posts) ->
     callback null, posts
@@ -33,6 +35,7 @@ Post.defineStatic "userMap", (userId, callback) ->
 
 Post.defineStatic "getPost", (postId, callback) ->
   @get postId
+  .getJoin()
   .run()
   .then (post) ->
     callback null, post

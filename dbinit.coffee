@@ -50,6 +50,7 @@ r.connect()
       console.log "索引已存在"
   .then (result) ->
     console.log "为Post表创建地理位置数据索引"
+    process.exit(0);
   .error (err) ->
     console.log err
 .error (err) ->
