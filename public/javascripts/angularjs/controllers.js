@@ -97,6 +97,7 @@ mapControllers.controller('mapCtrl', ['$scope', 'notificationService', function 
     LbsApp.api.getUserMap()
     .then(function (res) {
       if (res.success) {
+        res.map = res.map || [];
         return res.map.sort(function (a, b) {
           var atime = new Date(a.time);
           var btime = new Date(b.time);

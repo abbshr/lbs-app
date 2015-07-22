@@ -15,7 +15,7 @@
     "serve-favicon": "~2.2.1",
     "rethinkdb": "*",
     "thinky": "*",
-    "multer": "*",
+    "multer": "0.1.8",
     "express-session": "*",
     "express-session-rethinkdb": "*"
   }

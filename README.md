@@ -38,11 +38,19 @@ Promise, ES6, RethinkDB, fetch, geolocation, getUserMedia, CoffeeScript, Angular
 ## 服务器部署
 
 ```sh
-# 安装libcap依赖以允许普通用户使用1024以下的端口
+# 安装libcap依赖以允许普通用户使用1024以下的端口 (Ubuntu)
 sudo apt-get install libcap2 libcap2-bin
+# (OSX/Unix)
+git clone git@github.com:Castaglia/MacOSX-authbind.git
+cd MacOSX-authbind
+make && sudo make install
 
-# 允许node使用1024以下端口
+# 允许node使用1024以下端口 (Linux)
 sudo setcap cap_net_bind_service=+ep /usr/local/bin/iojs
+# (Unix/OSX)
+sudo touch /etc/authbind/byport/80
+sudo chown $USER /etc/authbind/byport/80
+sudo chmod 755 /etc/authbind/byport/80
 
 # 安装rethinkdb
 
@@ -61,6 +69,8 @@ rehinkdb
 # 初始化数据库
 ./dbinit.coffee
 
-# 启动服务器
+# 启动服务器 (Linux)
 npm start
+# (Unix/OSX)
+authbind npm start
 ```
